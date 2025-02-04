@@ -1,28 +1,26 @@
-
+ul{
+	list-style: none;
+}
 .footer{
 	margin-top: auto;
   height: 190px;
-  background-color: #169154;
+  background-color: #22925a;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0px 60px;
 }
-
-.follow svg{
-	width: 40px;
-	height: 40px;
-	border-radius: 7px;
-	border: 2px solid black;
+.follow i{
+	font-size: 40px;
 }
-.add-cont svg{
+.add-cont i{
 	height: 18px;
 	width: 18px;
 }
 .foot{
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: left;
 	width: 100%;
 	color: white;
 }
@@ -38,9 +36,13 @@
 .main-foot p{
 	padding-top: 20px;
 	font-size: 14px;
+	padding-right: 250px;
 }
 .follow{
 	padding-top: 10px;
+}
+.add-cont{
+	padding-right: 250px;
 }
 .add-cont h5{
 	font-size: 17px;
@@ -52,7 +54,7 @@
 	display: flex;
 	align-items: center;
 	font-size: 16px;
-	padding: 1px 0px;
+	padding: 2px 0px;
 }
 .add-cont li span{
 	padding-left: 10px;

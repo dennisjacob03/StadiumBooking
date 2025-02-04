@@ -1,10 +1,13 @@
+i{
+	color: white;
+}
 .hero{
 	width: 100%;
 	min-height: 100vh;
 	background: linear-gradient(rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0.7)), url('../../assets/signbg.jpg');
 	background-size: cover;
 	background-position: center;
-	color: #fff;
+	color: #ffffff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -12,8 +15,102 @@
 .hero-text{
 	text-align: center;
 	max-width: 800px;
+	padding-top: 40px;
 }
 .hero-text h1{
 	font-size: 60px;
 	font-weight: 600;
+}
+
+.filter{
+	width: 100%;
+	padding: 0px 80px;
+	margin-top: 60px;
+}
+.form-items{
+	width: 100%;
+  background-color: #22925a;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 100px;
+	padding: 0px 30px;
+}
+.search{
+	height: 40px;
+	width: 36%;
+}
+.search input{
+	height: 100%;
+	width: 90%;
+	font-size: 16px;
+	border: none;
+	background-color: rgba(255, 255, 255, 0);
+	border-bottom: 1px solid rgb(255, 255, 255);
+	color: white;
+	outline-style: none;
+}
+.search ::placeholder{
+	color: white;
+}
+.search button{
+	height: 100%;
+	width: 8%;
+	background-color: rgba(255, 255, 255, 0);
+	border: none;
+	cursor: pointer;
+}
+.search i{
+	font-size: 16px;
+}
+.vl{
+	height: 46px;
+	width: 1px;
+	background-color: #dedede;
+}
+.other-filter{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 30%;
+	font-size: 16px;
+	color: white;
+}
+.select-bar{
+	border: none;
+	outline-style: none;
+	font-size: 15px;
+	padding-left: 2px;
+	color: #07381f;
+	height: 36px;
+	width: 200px;
+	border-radius: 4px;
+}
+.select-bar option{
+	color: #075d32;
+}
+.other-filter input{
+	outline-style: none;
+	border: none;
+	padding-left: 8px;
+	font-size: 15px;
+	color: #07381f;
+	height: 36px;
+	width: 200px;
+	border-radius: 4px;
+}
+.img i{
+	font-size: 16px;
+	padding-right: 6px;
+}
+.type{
+	padding-right: 14px;
+}
+
+.hero-combined{
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
 }
