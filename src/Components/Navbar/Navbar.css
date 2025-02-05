@@ -1,4 +1,6 @@
-nav{
+.navbar{
+	
+	nav{
 	width: 100%;
 	/* background: #169154; */
 	color: #ffffff;
@@ -24,4 +26,5 @@ nav ul li{
 .dark-nav{
 	background: #22925a;
 	transition: 0.5s;
+}
 }

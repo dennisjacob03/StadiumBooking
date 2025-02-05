@@ -15,45 +15,47 @@ import event12 from '../../assets/event12.jpg'
 
 const Events = () => {
 	return (
-		<div className='events'>
-			<div className="event">
-				<img src={event1} alt="" />
-			</div>
-			<div className="event">
-				<img src={event2} alt="" />
-			</div>
-			<div className="event">
-				<img src={event3} alt="" />
-			</div>
-			<div className="event">
-				<img src={event4} alt="" />
-			</div>
-			<div className="event">
-				<img src={event5} alt="" />
-			</div>
-			<div className="event">
-				<img src={event6} alt="" />
-			</div>
-			<div className="event">
-				<img src={event7} alt="" />
-			</div>
-			<div className="event">
-				<img src={event8} alt="" />
-			</div>
-			<div className="event">
-				<img src={event9} alt="" />
-			</div>
-			<div className="event">
-				<img src={event10} alt="" />
-			</div>
-			<div className="event">
-				<img src={event11} alt="" />
-			</div>
-			<div className="event">
-				<img src={event12} alt="" />
-			</div>
-		</div>
-	)
+    <div className="event-box container">
+      <div className="events">
+        <div className="event">
+          <img src={event1} alt="" />
+        </div>
+        <div className="event">
+          <img src={event2} alt="" />
+        </div>
+        <div className="event">
+          <img src={event3} alt="" />
+        </div>
+        <div className="event">
+          <img src={event4} alt="" />
+        </div>
+        <div className="event">
+          <img src={event5} alt="" />
+        </div>
+        <div className="event">
+          <img src={event6} alt="" />
+        </div>
+        <div className="event">
+          <img src={event7} alt="" />
+        </div>
+        <div className="event">
+          <img src={event8} alt="" />
+        </div>
+        <div className="event">
+          <img src={event9} alt="" />
+        </div>
+        <div className="event">
+          <img src={event10} alt="" />
+        </div>
+        <div className="event">
+          <img src={event11} alt="" />
+        </div>
+        <div className="event">
+          <img src={event12} alt="" />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Events

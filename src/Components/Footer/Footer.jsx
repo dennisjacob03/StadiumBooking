@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "./Footer.css";
 import logo from "../../assets/logowhite.png"
 
-export const Footer = () => {
+const Footer = () => {
   return (
     <div className="footer">
       <div className="foot">
@@ -60,7 +60,7 @@ export const Footer = () => {
           <h5>Navigation Links</h5>
           <ul>
             <li>
-              <Link to="../about">About Us</Link>
+              <Link to="/about">About Us</Link>
             </li>
             <li>
               <a href="contact.html">Contact</a>
@@ -77,3 +77,4 @@ export const Footer = () => {
     </div>
   );
 };
+export default Footer;

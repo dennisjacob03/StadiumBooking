@@ -1,0 +1,139 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sign{
+	
+	min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background: linear-gradient(rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0.7)), url('../../assets/signbg.jpg');
+	background-repeat: no-repeat;
+	background-size: cover;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+.logo img{
+	height: 36px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin: 30px;
+}
+.sign-opt{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 42px;
+	width: 100%;
+	margin-top: 30px;
+	margin-bottom: 8px;
+	padding: 0 12px;
+}
+.opt{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 42px;
+	width: 200px;
+	border-radius: 20px;
+	font-size: 16px;
+	background-color: rgb(180, 189, 181);
+}
+.opt img{
+	height: 18px;
+	padding-right: 6px;
+}
+.separator{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 40px;
+	width: 100%;
+	margin-bottom: 14px;
+}
+.separator hr{
+	width: 160px;
+	margin: 10px;
+}
+.separator p{
+	margin-bottom: 7px;
+}
+.container{
+	height: 540px;
+	width: 420px;
+	background-color: #ffffff;
+	border-radius: 10px;
+	box-shadow: 0 2px 6px 0 rgba(11, 95, 14, 0.591);
+	padding: 0px 60px;
+}
+.head{
+	width: 100%;
+	text-align: center;
+	padding-top: 38px;
+	font-size: 28px;
+	font-weight: bold;
+}
+.form-all{
+	margin-top: 10px;
+}
+.form{
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	height: 70px;
+	width: 100%;
+	margin-bottom: 10px;
+}
+.form label{
+	width: 100%;
+	font-weight: 500;
+	font-size: 15px;
+}
+.form input{
+	width: 100%;
+	height: 42px;
+	outline-style: none;
+	border: 1px solid rgba(20, 78, 18, 0.682);
+	border-radius: 6px;
+	padding-left: 10px;
+	font-size: 16px;
+	color: rgb(16, 16, 16);
+}
+.forgot{
+	width: 100%;
+	text-align: right;
+	font-size: 14px;
+}
+a{
+	color: black;
+	text-decoration: none;
+	font-weight: 600;
+}
+.signing{
+	margin-top: 18px;
+	width: 100%;
+	text-align: center;
+}
+.checking{
+	font-size: 14px;
+}
+.signbtn{
+	background-color: rgb(7, 40, 4);
+	color: white;
+	font-size: 18px;
+	height: 40px;
+	width: 240px;
+	border-radius: 6px;
+	border: none;
+	box-shadow: 0 2px 6px 0 rgba(24, 44, 27, 0.589);
+	font-weight: bold;
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+}
