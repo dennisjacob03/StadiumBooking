@@ -1,5 +1,27 @@
 .navbar{
-	
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.username {
+  font-weight: bold;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.logout-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+
 	nav{
 	width: 100%;
 	/* background: #169154; */

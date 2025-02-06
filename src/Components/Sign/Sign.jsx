@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 import logo from "../../assets/logowhite.png";
 import "./Sign.css";
 
@@ -9,7 +10,7 @@ const Sign = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -18,7 +19,17 @@ const Sign = () => {
     try {
       setError("");
       setLoading(true);
-      await login(email, password);
+
+      const { user } = await login(email, password);
+
+      if (!user.emailVerified) {
+        setLoading(false);
+        setError("Please verify your email before logging in.");
+        toast.error("Email not verified! Please check your inbox.");
+        return;
+      }
+
+      toast.success("Login successful!");
       navigate("/");
     } catch (error) {
       switch (error.code) {
@@ -36,6 +47,19 @@ const Sign = () => {
       }
     }
     setLoading(false);
+  }
+
+  async function handleForgotPassword() {
+    if (!email) {
+      return toast.error("Please enter your email to reset the password.");
+    }
+
+    try {
+      await resetPassword(email);
+      toast.success("Password reset email sent! Check your inbox.");
+    } catch (error) {
+      toast.error("Failed to send reset email.");
+    }
   }
 
   return (
@@ -74,7 +98,9 @@ const Sign = () => {
                 />
               </div>
               <div className="forgot">
-                <Link to="/forgot-password">Forgot Password?</Link>
+                <button type="button" onClick={handleForgotPassword}>
+                  Forgot Password?
+                </button>
               </div>
             </div>
             <div className="signing">

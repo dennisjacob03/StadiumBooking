@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "../../firebase";
 import { toast } from "react-toastify";
+import { sendEmailVerification } from "firebase/auth";
+import { db } from "../../firebase"; // Import Firestore
+import { doc, setDoc, serverTimestamp } from "firebase/firestore"; // Firestore functions
 import logo from "../../assets/logowhite.png";
 import "./Signup.css";
 
@@ -16,6 +17,7 @@ const Signup = () => {
     confirmPassword: "",
     agreeToTerms: false,
   });
+
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
@@ -28,11 +30,20 @@ const Signup = () => {
     }));
   };
 
+  const validatePhoneNumber = (phone) => {
+    const phoneRegex = /^[0-9]{10}$/; // Matches a 10-digit phone number
+    return phoneRegex.test(phone);
+  };
+
   async function handleSubmit(e) {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
       return toast.error("Passwords don't match!");
+    }
+
+    if (!validatePhoneNumber(formData.phone)) {
+      return toast.error("Invalid phone number! Enter a 10-digit number.");
     }
 
     if (!formData.agreeToTerms) {
@@ -45,15 +56,22 @@ const Signup = () => {
       setLoading(true);
       const { user } = await signup(formData.email, formData.password);
 
+      // Save user details in Firestore
       await setDoc(doc(db, "users", user.uid), {
         fullName: formData.fullName,
         email: formData.email,
         phone: formData.phone,
-        createdAt: new Date().toISOString(),
+        password: formData.password, // Store password (Not recommended in real apps, better to hash it)
+        createdAt: serverTimestamp(), // Store the timestamp
       });
 
-      toast.success("Account created successfully!");
-      navigate("/");
+      // Send email verification
+      await sendEmailVerification(user);
+      toast.info(
+        "A verification email has been sent. Please check your inbox."
+      );
+
+      navigate("/sign"); // Redirect to login after signup
     } catch (error) {
       toast.error("Failed to create account: " + error.message);
     }
