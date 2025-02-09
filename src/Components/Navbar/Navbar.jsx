@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { db } from "../../firebase"; // Import Firestore
-import { doc, getDoc } from "firebase/firestore"; // Firestore functions
+import { db } from "../../firebase";
+import { doc, getDoc } from "firebase/firestore"; 
 import "./Navbar.css";
 import logo from "../../assets/logowhite.png";
 
 const Navbar = () => {
+  const [sticky, setSticky] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setSticky(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const { currentUser, logout } = useAuth();
   const [userData, setUserData] = useState(null);
 
@@ -27,7 +39,7 @@ const Navbar = () => {
 
   return (
     <div className="navbar">
-      <nav className="container">
+      <nav className={`container ${sticky ? "dark-nav" : ""}`}>
         <img src={logo} alt="SpotOn" className="logo" />
         <ul>
           <li>Explore</li>
@@ -36,9 +48,7 @@ const Navbar = () => {
           <li>
             {currentUser ? (
               <div className="user-info">
-                <span className="username">
-                  {userData?.fullName || ""}
-                </span>
+                <span className="username">{userData?.fullName || ""}</span>
                 <button onClick={logout} className="btn logout-btn">
                   Logout
                 </button>

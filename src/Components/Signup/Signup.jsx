@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { sendEmailVerification } from "firebase/auth";
-import { db } from "../../firebase"; // Import Firestore
-import { doc, setDoc, serverTimestamp } from "firebase/firestore"; // Firestore functions
+import { db } from "../../firebase";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore"; 
 import logo from "../../assets/logowhite.png";
 import "./Signup.css";
 
@@ -90,7 +90,7 @@ const Signup = () => {
           <div className="head">Sign Up</div>
           <form onSubmit={handleSubmit}>
             <div className="form-all">
-              <div className="form">
+              <div className="form main">
                 <label htmlFor="fullName">Full Name</label>
                 <input
                   type="text"

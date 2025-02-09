@@ -62,8 +62,8 @@
 	margin-bottom: 7px;
 }
 .container{
-	height: 620px;
-	width: 480px;
+	height: 580px;
+	width: 440px;
 	padding: 0px 54px;
 	background-color: #ffffff;
 	border-radius: 10px;
@@ -74,19 +74,16 @@
 	text-align: center;
 	font-size: 28px;
 	font-weight: bold;
-	padding-top: 34px;
+	padding-top: 50px;
 }
 .form-all{
-	margin-top: 10px;
+	margin-top: 50px;
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
 }
 
-.form .main{
-	width: 100%;
-}
 .form{
 	display: flex;
 	flex-wrap: wrap;
@@ -111,6 +108,9 @@
 	font-size: 16px;
 	color: rgb(16, 16, 16);
 }
+.form.main{
+	width: 100%;
+}
 .forgot{
 	width: 100%;
 	text-align: right;
@@ -122,7 +122,6 @@ a{
 	font-weight: 600;
 }
 .signing{
-	margin-top: 18px;
 	width: 100%;
 	text-align: center;
 }
@@ -141,11 +140,23 @@ a{
 	font-weight: bold;
 	margin-top: 20px;
 	margin-bottom: 10px;
+	cursor: pointer;
 }
 
-			.check{
-				width: 300px;
-				font-size: 14px;
-				margin-left: 40px;
-			}
+	.check{
+		width: 100%;
+		padding: 0 26px;
+		font-size: 14px;
+		display: flex;
+		justify-content: center;
+		margin-top: 40px;
+	}
+	.check input{
+		width: 10%;
+		height: 20px;
+		margin: 4px;
+	}
+	.check label{
+		margin-left: 6px;
+	}
 }
