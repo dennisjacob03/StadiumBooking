@@ -4,8 +4,9 @@ import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { sendEmailVerification } from "firebase/auth";
 import { db } from "../../firebase";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore"; 
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import logo from "../../assets/logowhite.png";
+import verified from "../../assets/verified.png";
 import "./Signup.css";
 
 const Signup = () => {
@@ -30,13 +31,25 @@ const Signup = () => {
     }));
   };
 
+  const validateFullName = (name) => {
+    const trimmedName = name.trim(); // Remove leading and trailing spaces
+    const nameRegex = /^[A-Za-z ]+$/; // Only letters and spaces allowed
+    return trimmedName.length > 0 && nameRegex.test(trimmedName);
+  };
+
   const validatePhoneNumber = (phone) => {
-    const phoneRegex = /^[0-9]{10}$/; // Matches a 10-digit phone number
+    const phoneRegex = /^[0-9]{10}$/;
     return phoneRegex.test(phone);
   };
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    if (!validateFullName(formData.fullName)) {
+      return toast.error(
+        "Invalid full name! Only letters and spaces are allowed."
+      );
+    }
 
     if (formData.password !== formData.confirmPassword) {
       return toast.error("Passwords don't match!");
@@ -56,22 +69,20 @@ const Signup = () => {
       setLoading(true);
       const { user } = await signup(formData.email, formData.password);
 
-      // Save user details in Firestore
       await setDoc(doc(db, "users", user.uid), {
-        fullName: formData.fullName,
+        fullName: formData.fullName.trim(), // Save cleaned full name
         email: formData.email,
         phone: formData.phone,
-        password: formData.password, // Store password (Not recommended in real apps, better to hash it)
-        createdAt: serverTimestamp(), // Store the timestamp
+        password: formData.password,
+        createdAt: serverTimestamp(),
       });
 
-      // Send email verification
       await sendEmailVerification(user);
       toast.info(
         "A verification email has been sent. Please check your inbox."
       );
 
-      navigate("/sign"); // Redirect to login after signup
+      navigate("/sign");
     } catch (error) {
       toast.error("Failed to create account: " + error.message);
     }
@@ -101,7 +112,15 @@ const Signup = () => {
                 />
               </div>
               <div className="form">
-                <label htmlFor="email">Email</label>
+                <div className="label-verify">
+                  <label htmlFor="email">Email</label>
+                  <span className="verify">
+                    <button type="button">
+                      <span>Verified</span>
+                      <img src={verified} alt="verified" />
+                    </button>
+                  </span>
+                </div>
                 <input
                   type="email"
                   name="email"
@@ -111,7 +130,15 @@ const Signup = () => {
                 />
               </div>
               <div className="form">
-                <label htmlFor="phone">Phone Number</label>
+                <div className="label-verify">
+                  <label htmlFor="phone">Phone Number</label>
+                  <span className="verify">
+                    <button type="button">
+                      <span>Verified</span>
+                      <img src={verified} alt="verified" />
+                    </button>
+                  </span>
+                </div>
                 <input
                   type="tel"
                   name="phone"
@@ -149,9 +176,9 @@ const Signup = () => {
                   id="check"
                 />
                 <label htmlFor="check">
-                  By creating an account you agree with our{" "}
-                  <Link to="/terms">Terms of Service</Link> and{" "}
-                  <Link to="/privacy">Privacy Policy</Link>
+                  By creating an account you agree with our
+                  <Link to="/terms"> Terms of Service </Link> and
+                  <Link to="/privacy"> Privacy Policy</Link>
                 </label>
               </div>
             </div>
