@@ -194,6 +194,22 @@ const Signup = () => {
           </form>
         </div>
       </div>
+      <div className="popup" style={{ display: "none" }}>
+        <div className="pop-box">
+          <div className="pop-head">Verification</div>
+          <div className="pop-content">
+            <div className="pop-text">
+              Enter the OTP which has been send to your email address.
+            </div>
+            <div className="pop-input">
+              <input type="text" placeholder="Enter OTP" />
+              <div className="pop-btn">
+                <button>Resend Email</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
