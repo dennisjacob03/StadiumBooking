@@ -5,9 +5,11 @@ import { db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore"; 
 import "./Navbar.css";
 import logo from "../../assets/logowhite.png";
+import user from "../../assets/user-default.png"
 
 const Navbar = () => {
   const [sticky, setSticky] = useState(false);
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,10 +50,17 @@ const Navbar = () => {
           <li>
             {currentUser ? (
               <div className="user-info">
-                <span className="username">{userData?.fullName || ""}</span>
+                <span className="user">
+									<img src={user} alt="user" />
+									Hi, {userData?.fullName || "Guest"}</span>
+								<div className="on-hover">
+								<Link to="/Myprofile" className="profile-link">
+								My Profile</Link>
+								<hr />
                 <button onClick={logout} className="btn logout-btn">
-                  Logout
+                  Log Out
                 </button>
+								</div>
               </div>
             ) : (
               <Link to="/Sign">

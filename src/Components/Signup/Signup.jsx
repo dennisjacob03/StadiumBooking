@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
-import { sendEmailVerification } from "firebase/auth";
 import { db } from "../../firebase";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import logo from "../../assets/logowhite.png";
 import verified from "../../assets/verified.png";
 import "./Signup.css";
@@ -20,6 +19,10 @@ const Signup = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [generatedOtp, setGeneratedOtp] = useState(null);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
 
@@ -32,37 +35,60 @@ const Signup = () => {
   };
 
   const validateFullName = (name) => {
-    const trimmedName = name.trim(); // Remove leading and trailing spaces
-    const nameRegex = /^[A-Za-z ]+$/; // Only letters and spaces allowed
+    const trimmedName = name.trim();
+    const nameRegex = /^[A-Za-z ]+$/;
     return trimmedName.length > 0 && nameRegex.test(trimmedName);
   };
 
-  const validatePhoneNumber = (phone) => {
-    const phoneRegex = /^[0-9]{10}$/;
-    return phoneRegex.test(phone);
+  const generateOTP = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
   };
 
-  async function handleSubmit(e) {
+  const sendOtpToEmail = async () => {
+    if (!formData.email) return toast.error("Please enter an email address.");
+
+    const otpCode = generateOTP();
+    setGeneratedOtp(otpCode);
+    setOtpSent(true);
+
+    // Store OTP in Firestore (temporary)
+    await setDoc(doc(db, "otp_verifications", formData.email), {
+      otp: otpCode,
+      createdAt: serverTimestamp(),
+    });
+
+    toast.info(`OTP sent to ${formData.email}. Check your inbox.`);
+  };
+
+  const verifyOtp = async () => {
+    if (!otp) return toast.error("Please enter the OTP.");
+    const otpDoc = await getDoc(doc(db, "otp_verifications", formData.email));
+
+    if (otpDoc.exists() && otpDoc.data().otp === otp) {
+      toast.success("OTP Verified! You can now create an account.");
+      setOtpVerified(true);
+    } else {
+      toast.error("Invalid OTP! Please try again.");
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateFullName(formData.fullName)) {
-      return toast.error(
-        "Invalid full name! Only letters and spaces are allowed."
-      );
+      return toast.error("Invalid full name! Only letters and spaces allowed.");
     }
 
     if (formData.password !== formData.confirmPassword) {
       return toast.error("Passwords don't match!");
     }
 
-    if (!validatePhoneNumber(formData.phone)) {
-      return toast.error("Invalid phone number! Enter a 10-digit number.");
+    if (!formData.agreeToTerms) {
+      return toast.error("Please agree to the Terms of Service.");
     }
 
-    if (!formData.agreeToTerms) {
-      return toast.error(
-        "Please agree to the Terms of Service and Privacy Policy"
-      );
+    if (!otpVerified) {
+      return toast.error("Please verify your email first.");
     }
 
     try {
@@ -70,24 +96,19 @@ const Signup = () => {
       const { user } = await signup(formData.email, formData.password);
 
       await setDoc(doc(db, "users", user.uid), {
-        fullName: formData.fullName.trim(), // Save cleaned full name
+        fullName: formData.fullName.trim(),
         email: formData.email,
         phone: formData.phone,
-        password: formData.password,
         createdAt: serverTimestamp(),
       });
 
-      await sendEmailVerification(user);
-      toast.info(
-        "A verification email has been sent. Please check your inbox."
-      );
-
-      navigate("/sign");
+      toast.success("Account created successfully!");
+      navigate("/home");
     } catch (error) {
       toast.error("Failed to create account: " + error.message);
     }
     setLoading(false);
-  }
+  };
 
   return (
     <div className="signup">
@@ -100,8 +121,21 @@ const Signup = () => {
         <div className="container">
           <div className="head">Sign Up</div>
           <form onSubmit={handleSubmit}>
+            <div className="sign-opt">
+              <a href="google.com">
+                <div className="opt">
+                  <img src="/image/google.webp" alt="" />
+                  Google
+                </div>
+              </a>
+            </div>
+            <div className="separator">
+              <hr />
+              <p>or</p>
+              <hr />
+            </div>
             <div className="form-all">
-              <div className="form main">
+              <div className="form">
                 <label htmlFor="fullName">Full Name</label>
                 <input
                   type="text"
@@ -115,9 +149,9 @@ const Signup = () => {
                 <div className="label-verify">
                   <label htmlFor="email">Email</label>
                   <span className="verify">
-                    <button type="button">
-                      <span>Verified</span>
-                      <img src={verified} alt="verified" />
+                    <button type="button" onClick={sendOtpToEmail}>
+                      <span>{otpSent ? "OTP Sent" : "Verify"}</span>
+                      {otpVerified && <img src={verified} alt="verified" />}
                     </button>
                   </span>
                 </div>
@@ -125,24 +159,6 @@ const Signup = () => {
                   type="email"
                   name="email"
                   value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form">
-                <div className="label-verify">
-                  <label htmlFor="phone">Phone Number</label>
-                  <span className="verify">
-                    <button type="button">
-                      <span>Verified</span>
-                      <img src={verified} alt="verified" />
-                    </button>
-                  </span>
-                </div>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
                   onChange={handleChange}
                   required
                 />
@@ -194,22 +210,30 @@ const Signup = () => {
           </form>
         </div>
       </div>
-      <div className="popup" style={{ display: "none" }}>
-        <div className="pop-box">
-          <div className="pop-head">Verification</div>
-          <div className="pop-content">
-            <div className="pop-text">
-              Enter the OTP which has been send to your email address.
-            </div>
-            <div className="pop-input">
-              <input type="text" placeholder="Enter OTP" />
-              <div className="pop-btn">
-                <button>Resend Email</button>
+      {otpSent && (
+        <div className="popup">
+          <div className="pop-box">
+            <div className="pop-head">Verification</div>
+            <div className="pop-content">
+              <div className="pop-text">Enter the OTP sent to your email.</div>
+              <div className="pop-input">
+                <input
+                  type="text"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                />
+                <div className="pop-btn">
+                  <button className="verify-btn" onClick={verifyOtp}>
+                Verify OTP
+              </button>
+							<button className="resend-btn"onClick={sendOtpToEmail}>Resend OTP</button></div>
               </div>
+              
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

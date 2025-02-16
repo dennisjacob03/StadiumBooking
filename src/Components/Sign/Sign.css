@@ -29,7 +29,7 @@
 	justify-content: center;
 	height: 42px;
 	width: 100%;
-	margin-top: 30px;
+	margin-top: 20px;
 	margin-bottom: 8px;
 	padding: 0 12px;
 }
@@ -63,7 +63,7 @@
 	margin-bottom: 7px;
 }
 .container{
-	height: 500px;
+	height: 540px;
 	width: 420px;
 	background-color: #ffffff;
 	border-radius: 10px;
@@ -73,12 +73,12 @@
 .head{
 	width: 100%;
 	text-align: center;
-	padding-top: 50px;
+	padding-top: 40px;
 	font-size: 28px;
 	font-weight: bold;
 }
 .form-all{
-	margin-top: 50px;
+	margin-top: 26px;
 }
 .form{
 	display: flex;
@@ -108,6 +108,9 @@
 	width: 100%;
 	text-align: right;
 	font-size: 14px;
+}
+.forgot button{
+	cursor: pointer;
 }
 a{
 	color: black;

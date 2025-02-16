@@ -77,7 +77,7 @@
 	padding-top: 50px;
 }
 .form-all{
-	margin-top: 60px;
+	margin-top: 24px;
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
@@ -108,9 +108,7 @@
 	font-size: 16px;
 	color: rgb(16, 16, 16);
 }
-.form.main{
-	width: 100%;
-}
+
 .forgot{
 	width: 100%;
 	text-align: right;
@@ -235,18 +233,23 @@ a{
 }	
 .pop-btn{
 	width: 100%;
-	text-align: center;
-	padding-top: 20px;
 }
 .pop-btn button{
+	margin: 20px;
 	color: white;
 	font-weight: 500;
 	font-size: 16px;
 	height: 40px;
-	width: 200px;
+	width: 140px;
 	background-color: #14673f;
 	border: none;
 	border-radius: 4px;
 	cursor: pointer;
+}
+.pop-btn .resend-btn{
+	background-color: #fff;
+	color: #14673f;
+		border: 2px solid rgba(20, 78, 18, 0.682);
+
 }
 }

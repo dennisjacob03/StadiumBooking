@@ -74,6 +74,19 @@ const Sign = () => {
           <div className="head">Sign In</div>
           {error && <div className="error-message">{error}</div>}
           <form onSubmit={handleSubmit}>
+            <div class="sign-opt">
+              <a href="google.com">
+                <div class="opt">
+                  <img src="/image/google.webp" alt="" />
+                  Google
+                </div>
+              </a>
+            </div>
+            <div class="separator">
+              <hr />
+              <p>or</p>
+              <hr />
+            </div>
             <div className="form-all">
               <div className="form">
                 <label htmlFor="email">Email</label>
