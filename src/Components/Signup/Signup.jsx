@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
-import { db } from "../../firebase";
+import { db, auth, googleProvider } from "../../firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import { sendEmailVerification, signInWithPopup } from "firebase/auth";
 import logo from "../../assets/logowhite.png";
 import verified from "../../assets/verified.png";
 import "./Signup.css";
+import google from "../../assets/google.webp";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -19,10 +21,7 @@ const Signup = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [generatedOtp, setGeneratedOtp] = useState(null);
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
 
@@ -40,39 +39,7 @@ const Signup = () => {
     return trimmedName.length > 0 && nameRegex.test(trimmedName);
   };
 
-  const generateOTP = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
-  };
-
-  const sendOtpToEmail = async () => {
-    if (!formData.email) return toast.error("Please enter an email address.");
-
-    const otpCode = generateOTP();
-    setGeneratedOtp(otpCode);
-    setOtpSent(true);
-
-    // Store OTP in Firestore (temporary)
-    await setDoc(doc(db, "otp_verifications", formData.email), {
-      otp: otpCode,
-      createdAt: serverTimestamp(),
-    });
-
-    toast.info(`OTP sent to ${formData.email}. Check your inbox.`);
-  };
-
-  const verifyOtp = async () => {
-    if (!otp) return toast.error("Please enter the OTP.");
-    const otpDoc = await getDoc(doc(db, "otp_verifications", formData.email));
-
-    if (otpDoc.exists() && otpDoc.data().otp === otp) {
-      toast.success("OTP Verified! You can now create an account.");
-      setOtpVerified(true);
-    } else {
-      toast.error("Invalid OTP! Please try again.");
-    }
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
 
     if (!validateFullName(formData.fullName)) {
@@ -87,25 +54,58 @@ const Signup = () => {
       return toast.error("Please agree to the Terms of Service.");
     }
 
-    if (!otpVerified) {
-      return toast.error("Please verify your email first.");
-    }
-
     try {
       setLoading(true);
       const { user } = await signup(formData.email, formData.password);
 
+      // Send email verification
+      await sendEmailVerification(user);
+      toast.info("Verification email sent! Please check your inbox.");
+
+      // Store user data in Firestore
       await setDoc(doc(db, "users", user.uid), {
         fullName: formData.fullName.trim(),
         email: formData.email,
         phone: formData.phone,
         createdAt: serverTimestamp(),
+        emailVerified: false, // Mark as unverified initially
       });
 
-      toast.success("Account created successfully!");
-      navigate("/home");
+      setLoading(false);
+      navigate("/sign");
     } catch (error) {
       toast.error("Failed to create account: " + error.message);
+      setLoading(false);
+    }
+  };
+
+  // Google Signup with user existence check
+  const handleGoogleSignup = async () => {
+    try {
+      setLoading(true);
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        toast.error("User already exists. Please sign in instead.");
+        navigate("/sign"); // Redirect to sign-in page
+      } else {
+        await setDoc(userDocRef, {
+          fullName: user.displayName || "",
+          email: user.email,
+          phone: user.phoneNumber || "",
+          createdAt: serverTimestamp(),
+          emailVerified: user.emailVerified,
+        });
+
+        toast.success("Google Signup successful!");
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error("Google Signup failed: " + error.message);
     }
     setLoading(false);
   };
@@ -120,14 +120,17 @@ const Signup = () => {
         </div>
         <div className="container">
           <div className="head">Sign Up</div>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSignup}>
             <div className="sign-opt">
-              <a href="google.com">
-                <div className="opt">
-                  <img src="/image/google.webp" alt="" />
-                  Google
-                </div>
-              </a>
+              <button
+                type="button"
+                className="opt google-signup"
+                onClick={handleGoogleSignup}
+                disabled={loading}
+              >
+                <img src={google} alt="Google" />
+                Sign up with Google
+              </button>
             </div>
             <div className="separator">
               <hr />
@@ -146,15 +149,8 @@ const Signup = () => {
                 />
               </div>
               <div className="form">
-                <div className="label-verify">
-                  <label htmlFor="email">Email</label>
-                  <span className="verify">
-                    <button type="button" onClick={sendOtpToEmail}>
-                      <span>{otpSent ? "OTP Sent" : "Verify"}</span>
-                      {otpVerified && <img src={verified} alt="verified" />}
-                    </button>
-                  </span>
-                </div>
+                <label htmlFor="email">Email</label>
+                {emailVerified && <img src={verified} alt="verified" />}
                 <input
                   type="email"
                   name="email"
@@ -210,30 +206,6 @@ const Signup = () => {
           </form>
         </div>
       </div>
-      {otpSent && (
-        <div className="popup">
-          <div className="pop-box">
-            <div className="pop-head">Verification</div>
-            <div className="pop-content">
-              <div className="pop-text">Enter the OTP sent to your email.</div>
-              <div className="pop-input">
-                <input
-                  type="text"
-                  placeholder="Enter OTP"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                />
-                <div className="pop-btn">
-                  <button className="verify-btn" onClick={verifyOtp}>
-                Verify OTP
-              </button>
-							<button className="resend-btn"onClick={sendOtpToEmail}>Resend OTP</button></div>
-              </div>
-              
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

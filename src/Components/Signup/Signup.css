@@ -31,8 +31,12 @@
 	margin-top: 30px;
 	margin-bottom: 8px;
 	padding: 0 42px;
+	button{
+		border: none;
+	}
 }
 .opt{
+	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;

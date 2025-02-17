@@ -4,7 +4,9 @@ import { AuthProvider } from "./contexts/AuthContext";
 import Home from "./Components/Home";
 import Sign from "./Components/Sign/Sign"
 import Signup from "./Components/Signup/Signup";
+import AdminDash from "./Components/AdminDash/AdminDash";
 import "react-toastify/dist/ReactToastify.css";
+import StadiumDash from "./Components/StadiumDash/StadiumDash";
 
 const App = () => {
   return (
@@ -15,6 +17,8 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/sign" element={<Sign />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/admindash" element={<AdminDash />} />
+          <Route path="/stadiumdash" element={<StadiumDash />} />
         </Routes>
       </AuthProvider>
     </Router>

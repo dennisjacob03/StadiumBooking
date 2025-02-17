@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
+import { auth, googleProvider } from "../../firebase";
+import { signInWithPopup } from "firebase/auth";
 import logo from "../../assets/logowhite.png";
+import google from "../../assets/google.webp";
 import "./Sign.css";
 
 const Sign = () => {
@@ -13,6 +16,7 @@ const Sign = () => {
   const { login, resetPassword } = useAuth();
   const navigate = useNavigate();
 
+  // Handle Email & Password Sign-In
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -49,6 +53,7 @@ const Sign = () => {
     setLoading(false);
   }
 
+  // Handle Password Reset
   async function handleForgotPassword() {
     if (!email) {
       return toast.error("Please enter your email to reset the password.");
@@ -60,6 +65,28 @@ const Sign = () => {
     } catch (error) {
       toast.error("Failed to send reset email.");
     }
+  }
+
+  // Handle Google Sign-In
+  async function handleGoogleSignIn() {
+    try {
+      setLoading(true);
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      if (!user.emailVerified) {
+        setLoading(false);
+        setError("Google account email is not verified.");
+        toast.error("Google account email not verified!");
+        return;
+      }
+
+      toast.success("Google Sign-In successful!");
+      navigate("/");
+    } catch (error) {
+      toast.error("Google Sign-In failed: " + error.message);
+    }
+    setLoading(false);
   }
 
   return (
@@ -74,15 +101,18 @@ const Sign = () => {
           <div className="head">Sign In</div>
           {error && <div className="error-message">{error}</div>}
           <form onSubmit={handleSubmit}>
-            <div class="sign-opt">
-              <a href="google.com">
-                <div class="opt">
-                  <img src="/image/google.webp" alt="" />
-                  Google
-                </div>
-              </a>
+            <div className="sign-opt">
+              <button
+                type="button"
+                className="opt google-signin"
+                onClick={handleGoogleSignIn}
+                disabled={loading}
+              >
+                <img src={google} alt="Google" />
+                Sign In with Google
+              </button>
             </div>
-            <div class="separator">
+            <div className="separator">
               <hr />
               <p>or</p>
               <hr />

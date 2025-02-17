@@ -15,7 +15,7 @@ const Hero = () => {
           <div className="filter-form">
             <form className="form-items">
               <div className="search">
-                <input type="text" placeholder="Search for Sports" />
+                <input type="search" placeholder="Search for Sports" />
                 <button type="submit">
                   <i className="fa-solid fa-magnifying-glass"></i>
                 </button>
