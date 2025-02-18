@@ -1,5 +1,5 @@
 
-.profile{
+.contact{
 background-color: #d6d6d6;
 a {
   text-decoration: none;
@@ -21,7 +21,7 @@ a {
   outline: 0;
   font-weight: bold;
 }
-.profile-bg{
+.contact-bg{
 	width: 100%;
 	height: 200px;
 	background: linear-gradient(rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0.7)), url('../../assets/signbg.jpg');
@@ -32,7 +32,7 @@ a {
 	align-items: center;
 	justify-content: center;
 }
-.profile-details{
+.contact-details{
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
@@ -42,34 +42,11 @@ a {
 	border-radius: 6px;
 	height: auto;
 }
-.manage{
-	width: 100%;
-	display: flex;
-	justify-content: left;
-	align-items: center;
-	padding:  20px;
-	margin-left: 120px;
-}
-.manage-links button{
-	margin: 10px;
-}
-.manage-links{
-	padding-left: 20px;
-}
-.profile-img img{
-	border: 2px solid #006923;
-	height: 80px;
-	border-radius: 50%;
-	margin: 20px;
-}
-hr{
-	width: 100%;
-}
 .section{
 	width: 100%;
 	padding: 20px;
 }
-.account-data{
+.all-data{
 	width: 100%;
 	text-align: center;
 	display: flex;
@@ -84,7 +61,7 @@ hr{
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 10px 0;
+	padding: 20px 0;
 	label{
 		text-align: left;
 		font-size: 18px;

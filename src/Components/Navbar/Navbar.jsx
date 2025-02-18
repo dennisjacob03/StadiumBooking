@@ -42,11 +42,13 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <nav className={`container ${sticky ? "dark-nav" : ""}`}>
+				<Link to="/" className="logo-link">
         <img src={logo} alt="SpotOn" className="logo" />
+				</Link>
         <ul>
-          <li>Explore</li>
-          <li>My Tickets</li>
-          <li>Contact</li>
+          <li><Link to="/">Explore</Link></li>
+          <li><Link to="/Tickets">My Tickets</Link></li>
+          <li><Link to="/Contact">Contact</Link></li>
           <li>
             {currentUser ? (
               <div className="user-info">
@@ -54,7 +56,7 @@ const Navbar = () => {
 									<img src={user} alt="user" />
 									Hi, {userData?.fullName || "Guest"}</span>
 								<div className="on-hover">
-								<Link to="/Myprofile" className="profile-link">
+								<Link to="/Profile" className="profile-link">
 								My Profile</Link>
 								<hr />
                 <button onClick={logout} className="btn logout-btn">

@@ -1,38 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
-import "./Profile.css";
-import user from "../../assets/user-default.png";
+import "./Contact.css";
 import { Link } from "react-router-dom";
 
-const Profile = () => {
+const Contact = () => {
   return (
-    <div className="profile container">
+    <div className="contact container">
       <Navbar></Navbar>
-      <div className="profile-page">
-        <div className="profile-bg">
-          <h1>My Profile</h1>
+      <div className="contact-page">
+        <div className="contact-bg">
+          <h1>Contact Us</h1>
         </div>
-        <div className="profile-details">
-          <div className="section manage">
-            <div className="profile-img">
-              <img src={user} alt="Profile" />
-            </div>
-            <h3>Hi, John Doe</h3>
-            <div className="manage-links">
-              <button type="button" className="btn">
-                Edit Profile
-              </button>
-              <Link to="/">
-                <button type="button" className="btn">
-                  Log Out
-                </button>
-              </Link>
-            </div>
-          </div>
-          <hr />
+        <div className="contact-details">
           <form>
-            <div className="section account-data">
+            <div className="section all-data">
               <div className="data">
                 <label>Name:</label>
                 <input type="text" value="John Doe" />
@@ -58,4 +40,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default Contact;

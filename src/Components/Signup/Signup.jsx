@@ -79,10 +79,17 @@ const Signup = () => {
     }
   };
 
-  // Google Signup with user existence check
+  // Google Signup with user logout to avoid session conflicts
   const handleGoogleSignup = async () => {
     try {
       setLoading(true);
+
+      // Sign out the current user to allow a new user to sign up
+      if (auth.currentUser) {
+        await auth.signOut();
+      }
+
+      // Sign in with Google
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
@@ -146,6 +153,7 @@ const Signup = () => {
                   value={formData.fullName}
                   onChange={handleChange}
                   required
+                  autoComplete="name"
                 />
               </div>
               <div className="form">
@@ -157,6 +165,7 @@ const Signup = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
+                  autoComplete="email"
                 />
               </div>
               <div className="form">
@@ -167,6 +176,7 @@ const Signup = () => {
                   value={formData.password}
                   onChange={handleChange}
                   required
+                  autoComplete="new-password"
                 />
               </div>
               <div className="form">
@@ -177,6 +187,7 @@ const Signup = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
+                  autoComplete="new-password"
                 />
               </div>
               <div className="check">

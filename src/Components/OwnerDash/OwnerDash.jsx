@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import "./Stadiumdash.css";
+import "./OwnerDash.css";
 import logo from "../../assets/logowhite.png";
 import user from "../../assets/user-default.png";
 
-const StadiumDash = () => {
+const OwnerDash = () => {
   const [sticky, setSticky] = useState(false);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const StadiumDash = () => {
   }, [currentUser]);
 
   return (
-    <div className="stadium-dash">
+    <div className="owner-dash">
       <div className="navbar">
         <nav className="container dark-nav">
           <img src={logo} alt="SpotOn" className="logo" />
@@ -77,10 +77,10 @@ const StadiumDash = () => {
         </nav>
       </div>
       <div className="side-nav">
-        <h2>Stadium Dashboard</h2>
+        <h2>Owner Dashboard</h2>
         <ul>
           <li>
-            <Link to="/StadiumDash" className="active">
+            <Link to="/ownerdash" className="active">
               Home
             </Link>
           </li>
@@ -124,4 +124,4 @@ const StadiumDash = () => {
   );
 };
 
-export default StadiumDash;
+export default OwnerDash;
