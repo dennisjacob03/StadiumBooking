@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  function signup(email, password, fullName) {
+  function signup(email, password, username) {
     return createUserWithEmailAndPassword(auth, email, password);
   }
 

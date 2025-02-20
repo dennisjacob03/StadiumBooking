@@ -12,16 +12,15 @@ import google from "../../assets/google.webp";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    fullName: "",
+    username: "",
     email: "",
-    phone: "",
     password: "",
     confirmPassword: "",
     agreeToTerms: false,
+		role: "user"
   });
 
   const [loading, setLoading] = useState(false);
-  const [emailVerified, setEmailVerified] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
 
@@ -42,7 +41,7 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    if (!validateFullName(formData.fullName)) {
+    if (!validateFullName(formData.username)) {
       return toast.error("Invalid full name! Only letters and spaces allowed.");
     }
 
@@ -64,11 +63,10 @@ const Signup = () => {
 
       // Store user data in Firestore
       await setDoc(doc(db, "users", user.uid), {
-        fullName: formData.fullName.trim(),
+        username: formData.username.trim(),
         email: formData.email,
-        phone: formData.phone,
         createdAt: serverTimestamp(),
-        emailVerified: false, // Mark as unverified initially
+				role: formData.role,
       });
 
       setLoading(false);
@@ -92,27 +90,26 @@ const Signup = () => {
       // Sign in with Google
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-
       const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists()) {
-        toast.error("User already exists. Please sign in instead.");
-        navigate("/sign"); // Redirect to sign-in page
+				toast.success("Google Sign In successful!");
+        toast.info("You already had an account.");
+        navigate("/"); // Redirect to sign-in page
       } else {
         await setDoc(userDocRef, {
-          fullName: user.displayName || "",
+          username: user.displayName || "",
           email: user.email,
-          phone: user.phoneNumber || "",
           createdAt: serverTimestamp(),
-          emailVerified: user.emailVerified,
+          role: formData.role,
         });
 
-        toast.success("Google Signup successful!");
+        toast.success("Google Sign Up successful!");
         navigate("/");
       }
     } catch (error) {
-      toast.error("Google Signup failed: " + error.message);
+      toast.error("Google Sign Up failed: " + error.message);
     }
     setLoading(false);
   };
@@ -149,8 +146,8 @@ const Signup = () => {
                 <label htmlFor="fullName">Full Name</label>
                 <input
                   type="text"
-                  name="fullName"
-                  value={formData.fullName}
+                  name="username"
+                  value={formData.username}
                   onChange={handleChange}
                   required
                   autoComplete="name"
@@ -158,7 +155,6 @@ const Signup = () => {
               </div>
               <div className="form">
                 <label htmlFor="email">Email</label>
-                {emailVerified && <img src={verified} alt="verified" />}
                 <input
                   type="email"
                   name="email"

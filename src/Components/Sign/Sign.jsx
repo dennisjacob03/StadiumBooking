@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
-import { auth, googleProvider } from "../../firebase";
+import { db, auth, googleProvider } from "../../firebase";
 import { signInWithPopup } from "firebase/auth";
+import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import logo from "../../assets/logowhite.png";
 import google from "../../assets/google.webp";
 import "./Sign.css";
@@ -73,18 +74,35 @@ const Sign = () => {
       setLoading(true);
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
 
-      if (!user.emailVerified) {
-        setLoading(false);
-        setError("Google account email is not verified.");
-        toast.error("Google account email not verified!");
-        return;
+      let role = "user"; // Default role
+
+      if (!userDoc.exists()) {
+        // If new user, create document
+        await setDoc(userDocRef, {
+          username: user.displayName || "",
+          email: user.email,
+          createdAt: serverTimestamp(),
+          role: "user",
+        });
+
+        toast.success("Google Sign Up successful!");
+        toast.info("You didn't have an account. One has been created.");
+      } else {
+        // If existing user, retrieve role from Firestore
+        const userData = userDoc.data();
+        role = userData.role || "user";
+        toast.success("Google Sign In successful!");
       }
 
-      toast.success("Google Sign-In successful!");
-      navigate("/");
+      // Redirect based on role
+      if (role === "admin") navigate("/admindash");
+      else if (role === "owner") navigate("/ownerdash");
+      else navigate("/");
     } catch (error) {
-      toast.error("Google Sign-In failed: " + error.message);
+      toast.error("Google Sign In failed: " + error.message);
     }
     setLoading(false);
   }
@@ -99,7 +117,6 @@ const Sign = () => {
         </div>
         <div className="container">
           <div className="head">Sign In</div>
-          {error && <div className="error-message">{error}</div>}
           <form onSubmit={handleSubmit}>
             <div className="sign-opt">
               <button
@@ -146,6 +163,7 @@ const Sign = () => {
                 </button>
               </div>
             </div>
+            {error && <div className="error-message">{error}</div>}
             <div className="signing">
               <button type="submit" className="signbtn" disabled={loading}>
                 {loading ? "Signing In..." : "SIGN IN"}

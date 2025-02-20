@@ -16,7 +16,7 @@ const Contact = () => {
           <form>
             <div className="section all-data">
               <div className="data">
-                <label>Name:</label>
+                <label>Full Name:</label>
                 <input type="text" value="John Doe" />
               </div>
               <div className="data">

@@ -34,7 +34,7 @@ const Profile = () => {
           <form>
             <div className="section account-data">
               <div className="data">
-                <label>Name:</label>
+                <label>Full Name:</label>
                 <input type="text" value="John Doe" />
               </div>
               <div className="data">
