@@ -9,6 +9,7 @@ import AdminDash from "./Components/AdminDash/AdminDash";
 import "react-toastify/dist/ReactToastify.css";
 import OwnerDash from "./Components/OwnerDash/OwnerDash";
 import Contact from "./Components/Contact/Contact";
+import Bookings from "./Components/Bookings/Bookings";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/admindash" element={<AdminDash />} />
           <Route path="/ownerdash" element={<OwnerDash />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/bookings" element={<Bookings />} />
         </Routes>
       </AuthProvider>
     </Router>

@@ -30,6 +30,7 @@ const OwnerDash = () => {
       if (currentUser) {
         const userRef = doc(db, "users", currentUser.uid);
         const userSnap = await getDoc(userRef);
+				
         await setDoc(
           doc(db, "login", currentUser.uid),
           {
@@ -83,7 +84,7 @@ const OwnerDash = () => {
                     Hi, {userData?.username || "Guest"}
                   </span>
                   <div className="on-hover">
-                    <Link to="/Myprofile" className="profile-link">
+                    <Link to="/profile" className="profile-link">
                       My Profile
                     </Link>
                     <hr />
