@@ -10,10 +10,6 @@ import event5 from "../../assets/event5.jpg";
 import event6 from "../../assets/event6.jpg";
 import event7 from "../../assets/event7.jpg";
 import event8 from "../../assets/event8.jpg";
-import event9 from "../../assets/event9.jpg";
-import event10 from "../../assets/event10.jpg";
-import event11 from "../../assets/event11.jpg";
-import event12 from "../../assets/event12.jpg";
 
 
 const Home = () => {
@@ -100,18 +96,6 @@ const Home = () => {
           </div>
           <div className="event">
             <img src={event8} alt="" />
-          </div>
-          <div className="event">
-            <img src={event9} alt="" />
-          </div>
-          <div className="event">
-            <img src={event10} alt="" />
-          </div>
-          <div className="event">
-            <img src={event11} alt="" />
-          </div>
-          <div className="event">
-            <img src={event12} alt="" />
           </div>
         </div>
       </div>

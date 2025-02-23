@@ -5,11 +5,11 @@ import { toast } from "react-toastify";
 
 import { db } from "../../firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
-import "./Bookings.css";
+import "./Seats.css";
 import user from "../../assets/user-default.png";
 import Adminnavbar from "../Adminnavbar/Adminnavbar";
 
-const Bookings = () => {
+const Seats = () => {
   const [sticky, setSticky] = useState(false);
 
   useEffect(() => {
@@ -65,12 +65,12 @@ const Bookings = () => {
     }
   };
   return (
-    <div className="bookings-container">
+    <div className="seats-container">
       <Adminnavbar></Adminnavbar>
       <div className="home-box">
         <div className="main-box">
           <div className="main 1">
-            <h1>Bookings</h1>
+            <h1>Seats</h1>
             <p>Manage Events</p>
             <Link to="/Events" className="btn">
               View
@@ -82,4 +82,4 @@ const Bookings = () => {
   );
 };
 
-export default Bookings;
+export default Seats;

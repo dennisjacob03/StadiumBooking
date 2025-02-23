@@ -1,10 +1,10 @@
-.owner-dash{
+.events-container{
 	font-family: 'Poppins', sans-serif;
 	color: #ffffff;
-	background-color: #ffffff;
 	width: 100%;
 	min-height: 100vh;
 	display: flex;
+		background-color: #24292d;
 	a {
   text-decoration: none;
   color: inherit;
@@ -37,7 +37,7 @@
 	width: 240px;
 	height: 140px;
 	border-radius: 6px;
-	background-color: #22553b;
+	background-color: #2f363e;
 	margin-right: 20px;
 	display: flex;
 	flex-wrap: wrap;

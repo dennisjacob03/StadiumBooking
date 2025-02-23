@@ -16,7 +16,7 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
     agreeToTerms: false,
-		role: "user"
+		role: "User"
   });
 
   const [loading, setLoading] = useState(false);

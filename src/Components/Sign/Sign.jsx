@@ -77,7 +77,7 @@ const Sign = () => {
       const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
-      let role = "user"; // Default role
+      let role = "User"; // Default role
 
       if (!userDoc.exists()) {
         // If new user, create document
@@ -85,7 +85,7 @@ const Sign = () => {
           username: user.displayName || "",
           email: user.email,
           createdAt: serverTimestamp(),
-          role: "user",
+          role: "User",
         });
 
         toast.success("Google Sign Up successful!");
@@ -98,8 +98,8 @@ const Sign = () => {
       }
 
       // Redirect based on role
-      if (role === "admin") navigate("/admindash");
-      else if (role === "owner") navigate("/ownerdash");
+      if (role === "Admin") navigate("/admindash");
+      else if (role === "Owner") navigate("/ownerdash");
       else navigate("/");
     } catch (error) {
       toast.error("Google Sign In failed: " + error.message);
@@ -176,6 +176,7 @@ const Sign = () => {
           </form>
         </div>
       </div>
+			
     </div>
   );
 };

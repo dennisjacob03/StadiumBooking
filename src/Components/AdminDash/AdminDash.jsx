@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 
 import { db } from "../../firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import Adminnavbar from "../Adminnavbar/Adminnavbar";
 import "./Admindash.css";
 import logo from "../../assets/logowhite.png";
 import user from "../../assets/user-default.png";
@@ -66,61 +67,7 @@ const AdminDash = () => {
   };
   return (
     <div className="admin-dash">
-      <div className="navbar">
-        <nav className="container dark-nav">
-          <img src={logo} alt="SpotOn" className="logo" />
-          <ul>
-            <li>
-              <div className="main-search">
-                <input type="search" placeholder="Search" />
-                <button className="btn">Search</button>
-              </div>
-            </li>
-            <li>
-              {currentUser ? (
-                <div className="user-info">
-                  <span className="user">
-                    <img src={user} alt="user" />
-                    Hi, {userData?.username || "Guest"}
-                  </span>
-                  <div className="on-hover">
-                    <Link to="/profile" className="profile-link">
-                      My Profile
-                    </Link>
-                    <hr />
-                    <button onClick={handleLogout} className="btn logout-btn">
-                      Log Out
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <Link to="/Sign">
-                  <button className="btn">SIGN IN</button>
-                </Link>
-              )}
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div className="side-nav">
-        <h2>Admin Dashboard</h2>
-        <ul>
-          <li>
-            <Link to="/AdminDash" className="active">
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link to="/Users">Users</Link>
-          </li>
-          <li>
-            <Link to="/Events">Events</Link>
-          </li>
-          <li>
-            <Link to="/Tickets">Tickets</Link>
-          </li>
-        </ul>
-      </div>
+      <Adminnavbar></Adminnavbar>
       <div className="home-box">
         <div className="main-box">
           <div className="main 1">
@@ -138,9 +85,23 @@ const AdminDash = () => {
             </Link>
           </div>
           <div className="main 3">
-            <h1>Tickets</h1>
-            <p>Manage tickets</p>
-            <Link to="/Tickets" className="btn">
+            <h1>Stadiums</h1>
+            <p>Manage Stadiums</p>
+            <Link to="/Stadiums" className="btn">
+              View
+            </Link>
+          </div>
+          <div className="main 3">
+            <h1>Bookings</h1>
+            <p>Manage Bookings</p>
+            <Link to="/Bookings" className="btn">
+              View
+            </Link>
+          </div>
+          <div className="main 3">
+            <h1>Seats</h1>
+            <p>Manage Seats</p>
+            <Link to="/Seats" className="btn">
               View
             </Link>
           </div>

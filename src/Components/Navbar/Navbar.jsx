@@ -74,7 +74,7 @@ const handleLogout = async () => {
 				</Link>
         <ul>
           <li><Link to="/">Explore</Link></li>
-					<li><Link to="/booking">My Bookings</Link></li>
+					<li><Link to="/Bookings">My Bookings</Link></li>
           <li><Link to="/Contact">Contact</Link></li>
           <li>
             {currentUser ? (
