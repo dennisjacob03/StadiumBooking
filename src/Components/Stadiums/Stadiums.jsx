@@ -84,47 +84,56 @@ const Stadiums = () => {
   }, []);
 
   return (
-    <div className="stadiums-container">
+    <div className="stadiums">
       <Adminnavbar />
-      <h2>Stadium Requests</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Location</th>
-            <th>Capacity</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {stadiums.map((stadium) => (
-            <tr key={stadium.id}>
-              <td>{stadium.stadium_name}</td>
-              <td>{stadium.location}</td>
-              <td>{stadium.capacity}</td>
-              <td>{stadium.status}</td>
-              <td>
-                <button
-                  onClick={() => handleUpdateStatus(stadium.id, "Approved")}
-                >
-                  Approve
-                </button>
-                <button
-                  onClick={() => handleUpdateStatus(stadium.id, "Disapproved")}
-                >
-                  Disapprove
-                </button>
-                <button
-                  onClick={() => handleUpdateStatus(stadium.id, "Pending")}
-                >
-                  Pending
-                </button>
-              </td>
+      <div className="stadiums-container">
+        <h2>Stadium Requests</h2>
+        <table>
+          <thead>
+            <tr>
+							<th>SI No.</th>
+              <th>Layout</th>
+              <th>Name</th>
+              <th>Location</th>
+              <th>Capacity</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {stadiums.map((stadium, index) => (
+              <tr key={stadium.id}>
+                <td>{index + 1}</td>
+                <td>
+                  <img
+                    src={stadium.layout || "https://via.placeholder.com/50"}
+                    alt="Stadium Layout"
+                    className="stadium-img"
+                  />
+                </td>
+                <td>{stadium.stadium_name}</td>
+                <td>{stadium.location}</td>
+                <td>{stadium.capacity}</td>
+                <td>{stadium.status}</td>
+                <td>
+                  <button
+                    onClick={() => handleUpdateStatus(stadium.id, "Approved")}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleUpdateStatus(stadium.id, "Disapproved")
+                    }
+                  >
+                    Disapprove
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

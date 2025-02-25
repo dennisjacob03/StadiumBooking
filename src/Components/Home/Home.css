@@ -142,7 +142,18 @@ a {
 	justify-content: center;
 }
 }
-
+/* .hero-text h1 span{
+	width: 20ch;
+	background-color: #d71414;
+	text-wrap: nowrap;
+	overflow: hidden;
+	animation: typing 2s steps(20) infinite alternate-reverse;
+}
+@keyframes typing {
+	from{
+		width:0ch;
+	}
+} */
 
 .event-box{
 .events{

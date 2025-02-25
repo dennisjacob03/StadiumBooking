@@ -7,6 +7,8 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext";
@@ -16,6 +18,7 @@ import "./Ownerstadiums.css";
 const Ownerstadiums = () => {
   const { currentUser } = useAuth();
   const [stadiums, setStadiums] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState({});
   const [newStadium, setNewStadium] = useState({
     stadium_name: "",
@@ -24,19 +27,31 @@ const Ownerstadiums = () => {
     layout: "",
     status: "Pending",
   });
+
+  // 🔹 Optimized Firestore query to fetch only the stadiums of the logged-in owner
   useEffect(() => {
     const fetchStadiums = async () => {
-      if (currentUser) {
-        try {
-          const stadiumsCollection = await getDocs(collection(db, "stadiums"));
-          const stadiumList = stadiumsCollection.docs
-            .map((doc) => ({ id: doc.id, ...doc.data() }))
-            .filter((stadium) => stadium.ownerId === currentUser.uid);
-          setStadiums(stadiumList);
-        } catch (error) {
-          console.error("Error fetching stadiums:", error);
-        }
+      if (!currentUser) {
+        setLoading(false);
+        return;
       }
+
+      try {
+        const stadiumsRef = collection(db, "stadiums");
+        const q = query(stadiumsRef, where("ownerId", "==", currentUser.uid));
+        const snapshot = await getDocs(q);
+
+        const stadiumList = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setStadiums(stadiumList);
+      } catch (error) {
+        console.error("Error fetching stadiums:", error);
+        toast.error("Failed to load stadiums.");
+      }
+      setLoading(false);
     };
 
     fetchStadiums();
@@ -49,11 +64,6 @@ const Ownerstadiums = () => {
   const handleSaveClick = async (id, updatedData) => {
     try {
       await updateDoc(doc(db, "stadiums", id), updatedData);
-      setStadiums((prevStadiums) =>
-        prevStadiums.map((stadium) =>
-          stadium.id === id ? { ...stadium, ...updatedData } : stadium
-        )
-      );
       setEditMode((prev) => ({ ...prev, [id]: false }));
       toast.success("Stadium updated successfully!");
     } catch (error) {
@@ -80,9 +90,7 @@ const Ownerstadiums = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const base64String = reader.result;
-        localStorage.setItem("stadium_layout", base64String); // Store in local storage
-        setNewStadium((prev) => ({ ...prev, layout: base64String })); // Update state
+        setNewStadium((prev) => ({ ...prev, layout: reader.result }));
       };
       reader.readAsDataURL(file);
     }
@@ -102,6 +110,7 @@ const Ownerstadiums = () => {
       const docRef = await addDoc(collection(db, "stadiums"), {
         ...newStadium,
         ownerId: currentUser.uid,
+        createdAt: new Date(),
       });
       setStadiums([...stadiums, { id: docRef.id, ...newStadium }]);
       setNewStadium({
@@ -155,111 +164,117 @@ const Ownerstadiums = () => {
           </button>
         </div>
 
-        <table>
-          <thead>
-            <tr>
-              <th>Layout</th>
-              <th>Name</th>
-              <th>Location</th>
-              <th>Capacity</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {stadiums.map((stadium) => (
-              <tr key={stadium.id}>
-                <td>
-                  <img
-                    src={stadium.layout || "https://via.placeholder.com/50"}
-                    alt="Stadium Layout"
-                    className="stadium-img"
-                  />
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    value={stadium.stadium_name}
-                    disabled={!editMode[stadium.id]}
-                    onChange={(e) =>
-                      setStadiums(
-                        stadiums.map((s) =>
-                          s.id === stadium.id
-                            ? { ...s, stadium_name: e.target.value }
-                            : s
-                        )
-                      )
-                    }
-                  />
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    value={stadium.location}
-                    disabled={!editMode[stadium.id]}
-                    onChange={(e) =>
-                      setStadiums(
-                        stadiums.map((s) =>
-                          s.id === stadium.id
-                            ? { ...s, location: e.target.value }
-                            : s
-                        )
-                      )
-                    }
-                  />
-                </td>
-                <td>
-                  <input
-                    type="number"
-                    value={stadium.capacity}
-                    disabled={!editMode[stadium.id]}
-                    onChange={(e) =>
-                      setStadiums(
-                        stadiums.map((s) =>
-                          s.id === stadium.id
-                            ? { ...s, capacity: e.target.value }
-                            : s
-                        )
-                      )
-                    }
-                  />
-                </td>
-                <td className="status">
-                  <span
-                    className={
-                      stadium.status === "Approved" ? "approved" : "pending"
-                    }
-                  >
-                    {stadium.status}
-                  </span>
-                </td>
-                <td>
-                  {editMode[stadium.id] ? (
-                    <button
-                      className="save-btn btns"
-                      onClick={() => handleSaveClick(stadium.id, stadium)}
-                    >
-                      Save
-                    </button>
-                  ) : (
-                    <button
-                      className="edit-btn btns"
-                      onClick={() => handleEditClick(stadium.id)}
-                    >
-                      Edit
-                    </button>
-                  )}
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDeleteStadium(stadium.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
+        {loading ? (
+          <p>Loading stadiums...</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>SI No.</th>
+                <th>Layout</th>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Capacity</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {stadiums.map((stadium, index) => (
+                <tr key={stadium.id}>
+                  <td>{index + 1}</td>
+                  <td>
+                    <img
+                      src={stadium.layout || "https://via.placeholder.com/50"}
+                      alt="Stadium Layout"
+                      className="stadium-img"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={stadium.stadium_name}
+                      disabled={!editMode[stadium.id]}
+                      onChange={(e) =>
+                        setStadiums(
+                          stadiums.map((s) =>
+                            s.id === stadium.id
+                              ? { ...s, stadium_name: e.target.value }
+                              : s
+                          )
+                        )
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={stadium.location}
+                      disabled={!editMode[stadium.id]}
+                      onChange={(e) =>
+                        setStadiums(
+                          stadiums.map((s) =>
+                            s.id === stadium.id
+                              ? { ...s, location: e.target.value }
+                              : s
+                          )
+                        )
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value={stadium.capacity}
+                      disabled={!editMode[stadium.id]}
+                      onChange={(e) =>
+                        setStadiums(
+                          stadiums.map((s) =>
+                            s.id === stadium.id
+                              ? { ...s, capacity: e.target.value }
+                              : s
+                          )
+                        )
+                      }
+                    />
+                  </td>
+                  <td className="status">
+                    <span
+                      className={
+                        stadium.status === "Approved" ? "approved" : "pending"
+                      }
+                    >
+                      {stadium.status}
+                    </span>
+                  </td>
+                  <td className="actions">
+                    {editMode[stadium.id] ? (
+                      <button
+                        className="save"
+                        onClick={() => handleSaveClick(stadium.id, stadium)}
+                      >
+                        <i class="material-icons save">save</i>
+                      </button>
+                    ) : (
+                      <button
+                        className="edit"
+                        onClick={() => handleEditClick(stadium.id)}
+                      >
+                        <i class="material-icons edit">edit</i>
+                      </button>
+                    )}
+                    <button
+                      className="delete"
+                      onClick={() => handleDeleteStadium(stadium.id)}
+                    >
+                      <i class="material-icons delete">delete</i>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

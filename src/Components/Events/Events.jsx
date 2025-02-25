@@ -1,82 +1,148 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { toast } from "react-toastify";
-
 import { db } from "../../firebase";
-import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
-import "./Events.css";
-import user from "../../assets/user-default.png";
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+} from "firebase/firestore";
 import Adminnavbar from "../Adminnavbar/Adminnavbar";
+import { toast } from "react-toastify";
+import "./Events.css";
 
 const Events = () => {
-  const [sticky, setSticky] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [stadiums, setStadiums] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setSticky(window.scrollY > 50);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const { currentUser, logout } = useAuth();
-  const [userData, setUserData] = useState(null);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (currentUser) {
-        const userRef = doc(db, "users", currentUser.uid);
-        const userSnap = await getDoc(userRef);
-
-        await setDoc(
-          doc(db, "login", currentUser.uid),
-          {
-            login_time: serverTimestamp(),
-          },
-          { merge: true }
-        );
-
-        if (userSnap.exists()) {
-          setUserData(userSnap.data());
-        }
-      }
-    };
-
-    fetchUserData();
-  }, [currentUser]);
-  const handleLogout = async () => {
-    if (currentUser) {
-      const userRef = doc(db, "login", currentUser.uid);
-
+    const fetchEventsAndStadiums = async () => {
       try {
-        // Store logout time in Firestore
-        await setDoc(userRef, {
-          logout_time: serverTimestamp(),
+        // Fetch events
+        const eventsRef = collection(db, "events");
+        const eventsSnapshot = await getDocs(eventsRef);
+        const eventList = eventsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        // Fetch stadiums
+        const stadiumsRef = collection(db, "stadiums");
+        const stadiumsSnapshot = await getDocs(stadiumsRef);
+        const stadiumData = {};
+        stadiumsSnapshot.docs.forEach((doc) => {
+          stadiumData[doc.id] = doc.data().stadium_name;
         });
 
-        await logout();
-        toast.success("Logged out successfully!");
+        setEvents(eventList);
+        setStadiums(stadiumData);
       } catch (error) {
-        toast.error("Error logging out: ", error);
+        console.error("Error fetching events or stadiums:", error);
+        toast.error("Failed to load events.");
       }
+      setLoading(false);
+    };
+
+    fetchEventsAndStadiums();
+  }, []);
+
+  const handleStatusChange = async (eventId, status) => {
+    try {
+      const eventRef = doc(db, "events", eventId);
+      await updateDoc(eventRef, { status });
+      setEvents((prevEvents) =>
+        prevEvents.map((event) =>
+          event.id === eventId ? { ...event, status } : event
+        )
+      );
+      toast.success(`Event marked as ${status}`);
+
+      if (status === "Disapproved") {
+        setTimeout(async () => {
+          await deleteDoc(eventRef);
+          setEvents((prevEvents) =>
+            prevEvents.filter((event) => event.id !== eventId)
+          );
+          toast.info("Disapproved event deleted after 24 hours.");
+        }, 24 * 60 * 60 * 1000);
+      }
+    } catch (error) {
+      console.error("Error updating event status:", error);
+      toast.error("Failed to update event status.");
     }
   };
+
   return (
-    <div className="events-container">
-      <Adminnavbar></Adminnavbar>
-      <div className="home-box">
-        <div className="main-box">
-          <div className="main 1">
-            <h1>Events</h1>
-            <p>Manage Events</p>
-            <Link to="/Events" className="btn">
-              View
-            </Link>
-          </div>
-        </div>
+    <div className="events">
+      <Adminnavbar />
+      <div className="events-container">
+        <h2>Manage Events</h2>
+        {loading ? (
+          <p>Loading events...</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>SI No.</th>
+                <th>Event Poster</th>
+                <th>Event Name</th>
+                <th>Sport</th>
+                <th>Teams</th>
+                <th>Stadium</th>
+                <th>Date & Time</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {events.map((event, index) => (
+                <tr key={event.id}>
+                  <td>{index + 1}</td>
+                  <td>
+                    <img
+                      src={event.event_poster}
+                      alt={event.event_name}
+                      className="event-poster"
+                      style={{ width: "50px", height: "50px" }}
+                    />
+                  </td>
+                  <td>{event.event_name}</td>
+                  <td>{event.sport}</td>
+                  <td>
+                    {event.team1} vs {event.team2}
+                  </td>
+                  <td>{stadiums[event.stadium_id] || "Unknown Stadium"}</td>
+                  <td>{new Date(event.date_time).toLocaleString()}</td>
+                  <td>
+                    <div className="description-cell">{event.description}</div>
+                  </td>
+
+                  <td>{event.status}</td>
+                  <td>
+                    <button
+                      onClick={() => handleStatusChange(event.id, "Approved")}
+                      className="approve-btn"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleStatusChange(event.id, "Disapproved")
+                      }
+                      className="disapprove-btn"
+                    >
+                      Disapprove
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
