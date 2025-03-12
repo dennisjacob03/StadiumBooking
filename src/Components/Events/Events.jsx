@@ -5,7 +5,6 @@ import {
   getDocs,
   doc,
   updateDoc,
-  deleteDoc,
   query,
   where,
 } from "firebase/firestore";
@@ -49,26 +48,17 @@ const Events = () => {
     fetchEventsAndStadiums();
   }, []);
 
-  const handleStatusChange = async (eventId, status) => {
+  const handleStatusChange = async (eventId, approval) => {
     try {
       const eventRef = doc(db, "events", eventId);
-      await updateDoc(eventRef, { status });
+      await updateDoc(eventRef, { approval });
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
-          event.id === eventId ? { ...event, status } : event
+          event.id === eventId ? { ...event, approval } : event
         )
       );
-      toast.success(`Event marked as ${status}`);
+      toast.success(`Event marked as ${approval}`);
 
-      if (status === "Disapproved") {
-        setTimeout(async () => {
-          await deleteDoc(eventRef);
-          setEvents((prevEvents) =>
-            prevEvents.filter((event) => event.id !== eventId)
-          );
-          toast.info("Disapproved event deleted after 24 hours.");
-        }, 24 * 60 * 60 * 1000);
-      }
     } catch (error) {
       console.error("Error updating event status:", error);
       toast.error("Failed to update event status.");
@@ -121,7 +111,7 @@ const Events = () => {
                     <div className="description-cell">{event.description}</div>
                   </td>
 
-                  <td>{event.status}</td>
+                  <td>{event.approval}</td>
                   <td>
                     <button
                       onClick={() => handleStatusChange(event.id, "Approved")}

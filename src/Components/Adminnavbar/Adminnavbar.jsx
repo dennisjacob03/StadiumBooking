@@ -114,10 +114,10 @@ const Adminnavbar = () => {
               <Link to="/Users">Users</Link>
             </li>
             <li>
-              <Link to="/Events">Events</Link>
+              <Link to="/Stadiums">Stadiums</Link>
             </li>
             <li>
-              <Link to="/Stadiums">Stadiums</Link>
+              <Link to="/Events">Events</Link>
             </li>
             <li>
               <Link to="/Bookings">Bookings</Link>

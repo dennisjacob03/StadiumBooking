@@ -1,6 +1,6 @@
 .ownerevents{
 	font-family: 'Poppins', sans-serif;
-	color: #ffffff;
+	color: #000000;
 	background-color: #ffffff;
 	width: 100%;
 	min-height: 100vh;
@@ -56,11 +56,12 @@ h3{
   margin-bottom: 20px;
 }
 
-.add-event input {
+.add-event input,select {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   flex: 1;
+	outline-style: none;
 }
 
 .add-event button {

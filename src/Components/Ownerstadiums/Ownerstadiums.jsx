@@ -6,7 +6,6 @@ import {
   addDoc,
   doc,
   updateDoc,
-  deleteDoc,
   query,
   where,
 } from "firebase/firestore";
@@ -25,10 +24,10 @@ const Ownerstadiums = () => {
     location: "",
     capacity: "",
     layout: "",
-    status: "Pending",
+    approval: "Pending",
+		status: 1, // Default status to active
   });
 
-  // 🔹 Optimized Firestore query to fetch only the stadiums of the logged-in owner
   useEffect(() => {
     const fetchStadiums = async () => {
       if (!currentUser) {
@@ -38,7 +37,8 @@ const Ownerstadiums = () => {
 
       try {
         const stadiumsRef = collection(db, "stadiums");
-        const q = query(stadiumsRef, where("ownerId", "==", currentUser.uid));
+        const q = query(stadiumsRef, where("ownerId", "==", currentUser.uid),where("status", "==", 1) // Fetch only active stadiums
+				);
         const snapshot = await getDocs(q);
 
         const stadiumList = snapshot.docs.map((doc) => ({
@@ -76,7 +76,7 @@ const Ownerstadiums = () => {
     if (!window.confirm("Are you sure you want to delete this stadium?"))
       return;
     try {
-      await deleteDoc(doc(db, "stadiums", id));
+      await updateDoc(doc(db, "stadiums", id), { status: 0 }); // Soft delete
       setStadiums(stadiums.filter((stadium) => stadium.id !== id));
       toast.success("Stadium deleted!");
     } catch (error) {
@@ -107,8 +107,22 @@ const Ownerstadiums = () => {
       return;
     }
     try {
-      const docRef = await addDoc(collection(db, "stadiums"), {
-        ...newStadium,
+					// Check if stadium with the same name and status=1 already exists
+					const stadiumsRef = collection(db, "stadiums");
+					const q = query(
+						stadiumsRef,
+						where("stadium_name", "==", newStadium.stadium_name),
+						where("status", "==", 1)
+					);
+					const snapshot = await getDocs(q);
+		
+					if (!snapshot.empty) {
+						toast.error("A stadium with this name already exists!");
+						return;
+					}
+		
+					const docRef = await addDoc(stadiumsRef, {
+						...newStadium,
         ownerId: currentUser.uid,
         createdAt: new Date(),
       });
@@ -118,7 +132,8 @@ const Ownerstadiums = () => {
         location: "",
         capacity: "",
         layout: "",
-        status: "Pending",
+        approval: "Pending",
+				status: 1, // Default status to active
       });
       toast.success("Stadium added successfully!");
     } catch (error) {
@@ -241,10 +256,10 @@ const Ownerstadiums = () => {
                   <td className="status">
                     <span
                       className={
-                        stadium.status === "Approved" ? "approved" : "pending"
+                        stadium.approval === "Approved" ? "approved" : "pending"
                       }
                     >
-                      {stadium.status}
+                      {stadium.approval}
                     </span>
                   </td>
                   <td className="actions">

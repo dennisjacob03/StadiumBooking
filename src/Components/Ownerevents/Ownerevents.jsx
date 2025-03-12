@@ -10,7 +10,6 @@ import {
   getDocs,
   doc,
   updateDoc,
-  deleteDoc,
 } from "firebase/firestore";
 import Ownernavbar from "../Ownernavbar/Ownernavbar";
 import "./Ownerevents.css";
@@ -18,6 +17,7 @@ import "./Ownerevents.css";
 const Ownerevents = () => {
   const { currentUser } = useAuth();
   const [events, setEvents] = useState([]);
+		const [stadiums, setStadiums] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(null);
   const [editedEvent, setEditedEvent] = useState(null);
@@ -26,18 +26,41 @@ const Ownerevents = () => {
     sport: "",
     team1: "",
     team2: "",
+		stadium_id: "",
     date_time: "",
     description: "",
     event_poster: "",
-    status: "Pending",
+    approval: "Pending",
+		status: 1,
   });
 
   useEffect(() => {
+			const fetchStadiums = async () => {
+				try {
+					const stadiumsRef = collection(db, "stadiums");
+					const q = query(
+            stadiumsRef,
+            where("status", "==", 1),
+            where("approval", "==", "Approved")
+          );
+					const snapshot = await getDocs(q);
+					const stadiumList = snapshot.docs.map((doc) => ({
+						id: doc.id,
+						...doc.data(),
+					}));
+					setStadiums(stadiumList);
+				} catch (error) {
+					console.error("Error fetching stadiums:", error);
+				}
+			};
     const fetchEvents = async () => {
-      if (!currentUser) return;
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
       try {
         const eventsRef = collection(db, "events");
-        const q = query(eventsRef, where("ownerId", "==", currentUser.uid));
+        const q = query(eventsRef, where("ownerId", "==", currentUser.uid),where("status", "==", 1) );
         const snapshot = await getDocs(q);
         const eventList = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -50,6 +73,7 @@ const Ownerevents = () => {
       }
       setLoading(false);
     };
+    fetchStadiums();
     fetchEvents();
   }, [currentUser]);
 
@@ -70,6 +94,7 @@ const Ownerevents = () => {
       !newEvent.sport ||
       !newEvent.team1 ||
       !newEvent.team2 ||
+			!newEvent.stadium_id ||
       !newEvent.date_time ||
       !newEvent.description ||
       !newEvent.event_poster
@@ -78,6 +103,18 @@ const Ownerevents = () => {
       return;
     }
     try {
+			const eventsRef = collection(db, "events");
+								const q = query(
+                  eventsRef,
+                  where("status", "==", 1),
+                  where("date_time", "==", newEvent.date_time)
+                );
+								const snapshot = await getDocs(q);
+					
+								if (!snapshot.empty) {
+									toast.error("There is another event scheduled at this time!");
+									return;
+								}
       const docRef = await addDoc(collection(db, "events"), {
         ...newEvent,
         ownerId: currentUser.uid,
@@ -89,10 +126,12 @@ const Ownerevents = () => {
         sport: "",
         team1: "",
         team2: "",
+        stadium_id: "",
         date_time: "",
         description: "",
         event_poster: "",
-        status: "Pending",
+        approval: "Pending",
+				status: 1,
       });
       toast.success("Event added successfully! Awaiting admin approval.");
     } catch (error) {
@@ -100,32 +139,15 @@ const Ownerevents = () => {
       toast.error("Failed to add event.");
     }
   };
-	
-		const handleEdit = (event) => {
-			setEditMode(event.id);
-			setEditedEvent(event);
-		};
-	
-		const handleSave = async () => {
-			if (!editedEvent) return;
-			try {
-				const eventRef = doc(db, "events", editedEvent.id);
-				await updateDoc(eventRef, editedEvent);
-				setEvents(events.map((e) => (e.id === editedEvent.id ? editedEvent : e)));
-				setEditMode(null);
-				toast.success("Event updated successfully!");
-			} catch (error) {
-				console.error("Error updating event:", error);
-				toast.error("Failed to update event.");
-			}
-		};
-	
+
 		const handleDelete = async (id) => {
+			if (!window.confirm("Are you sure you want to delete this event?"))
+        return;
 			try {
-				await deleteDoc(doc(db, "events", id));
-				setEvents(events.filter((event) => event.id !== id));
-				toast.success("Event deleted successfully!");
-			} catch (error) {
+        await updateDoc(doc(db, "events", id), { status: 0 }); // Soft delete
+        setEvents(events.filter((event) => event.id !== id));
+        toast.success("Event deleted successfully!");
+      } catch (error) {
 				console.error("Error deleting event:", error);
 				toast.error("Failed to delete event.");
 			}
@@ -170,6 +192,19 @@ const Ownerevents = () => {
               setNewEvent({ ...newEvent, team2: e.target.value })
             }
           />
+          <select
+            value={newEvent.stadium_id}
+            onChange={(e) =>
+              setNewEvent({ ...newEvent, stadium_id: e.target.value })
+            }
+          >
+            <option value="" disabled>Select Stadium</option>
+            {stadiums.map((stadiums) => (
+              <option key={stadiums.id} value={stadiums.id}>
+                {stadiums.stadium_name}
+              </option>
+            ))}
+          </select>
           <input
             type="datetime-local"
             value={newEvent.date_time}
@@ -201,6 +236,7 @@ const Ownerevents = () => {
                 <th>Event Name</th>
                 <th>Sport</th>
                 <th>Teams</th>
+                <th>Stadium</th>
                 <th>Date & Time</th>
                 <th>Description</th>
                 <th>Status</th>
@@ -280,6 +316,11 @@ const Ownerevents = () => {
                     )}
                   </td>
                   <td>
+                    {stadiums.find((stadium) => stadium.id === event.stadium_id)
+                      ?.stadium_name || "Unknown Stadium"}
+                  </td>
+
+                  <td>
                     {editMode === event.id ? (
                       <input
                         type="datetime-local"
@@ -313,20 +354,10 @@ const Ownerevents = () => {
                       </div>
                     )}
                   </td>
-                  <td className="status"><span>{event.status}</span></td>
+                  <td className="status">
+                    <span>{event.approval}</span>
+                  </td>
                   <td className="actions">
-                    {editMode === event.id ? (
-                      <button onClick={handleSave} className="save">
-                        <i class="material-icons save">save</i>
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleEdit(event)}
-                        className="edit"
-                      >
-                        <i class="material-icons edit">edit</i>
-                      </button>
-                    )}
                     <button
                       onClick={() => handleDelete(event.id)}
                       className="delete"

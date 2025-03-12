@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase";
-import {
-  collection,
-  getDocs,
-  doc,
-  deleteDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext";
 import Adminnavbar from "../Adminnavbar/Adminnavbar";
@@ -25,6 +19,7 @@ const Users = () => {
         const usersList = usersCollection.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
+          status: doc.data().status || "Active", // Default to Active
         }));
         setUsers(usersList);
       } catch (error) {
@@ -34,20 +29,6 @@ const Users = () => {
 
     fetchUsers();
   }, []);
-
-  // Delete user function
-  const handleDelete = async (userId) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
-
-    try {
-      await deleteDoc(doc(db, "users", userId));
-      setUsers(users.filter((user) => user.id !== userId));
-      toast.success("User deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      toast.error("Failed to delete user.");
-    }
-  };
 
   // Update user role
   const handleRoleChange = async (userId, newRole) => {
@@ -65,6 +46,22 @@ const Users = () => {
     }
   };
 
+  // Toggle user status
+  const handleStatusChange = async (userId, newStatus) => {
+    try {
+      await updateDoc(doc(db, "users", userId), { status: newStatus });
+      setUsers(
+        users.map((user) =>
+          user.id === userId ? { ...user, status: newStatus } : user
+        )
+      );
+      toast.success(`User status updated to ${newStatus}!`);
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status.");
+    }
+  };
+
   return (
     <div className="users-container">
       <Adminnavbar></Adminnavbar>
@@ -78,6 +75,7 @@ const Users = () => {
               <th>Name</th>
               <th>Email</th>
               <th>Role</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -104,13 +102,23 @@ const Users = () => {
                     <option value="Admin">Admin</option>
                   </select>
                 </td>
-                <td>
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDelete(user.id)}
-                  >
-                    Delete
-                  </button>
+                <td>{user.status}</td>
+                <td className="action-btn">
+                  {user.status === "Active" ? (
+                    <button
+                      className="inactive-btn"
+                      onClick={() => handleStatusChange(user.id, "Inactive")}
+                    >
+                      Inactive
+                    </button>
+                  ) : (
+                    <button
+                      className="active-btn"
+                      onClick={() => handleStatusChange(user.id, "Active")}
+                    >
+                      Active
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

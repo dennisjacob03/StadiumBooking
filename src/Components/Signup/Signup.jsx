@@ -92,10 +92,13 @@ const Signup = () => {
       const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
+			let role = "User";
+
       if (userDoc.exists()) {
+				const userData = userDoc.data();
+        role = userData.role || "User";
 				toast.success("Google Sign In successful!");
         toast.info("You already had an account.");
-        navigate("/"); // Redirect to sign-in page
       } else {
         await setDoc(userDocRef, {
           username: user.displayName || "",
@@ -105,8 +108,10 @@ const Signup = () => {
         });
 
         toast.success("Google Sign Up successful!");
-        navigate("/");
       }
+			if (role === "Admin") navigate("/admindash");
+      else if (role === "Owner") navigate("/ownerdash");
+      else navigate("/");
     } catch (error) {
       toast.error("Google Sign Up failed: " + error.message);
     }
