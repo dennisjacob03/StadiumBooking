@@ -20,17 +20,34 @@ const Sign = () => {
   // Handle Email & Password Sign-In
   async function handleSubmit(e) {
     e.preventDefault();
+  setError("");
+  setLoading(true);
 
     try {
-      setError("");
-      setLoading(true);
-
       const { user } = await login(email, password);
 
       if (!user.emailVerified) {
         setLoading(false);
         setError("Please verify your email before logging in.");
         toast.error("Email not verified! Please check your inbox.");
+        return;
+      }
+
+      // Fetch user status from Firestore
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        setLoading(false);
+        setError("No account found. Please sign up.");
+        return;
+      }
+
+      const userData = userDoc.data();
+      if (userData.status !== "Active") {
+        setLoading(false);
+        setError("Your account has been blocked by the admin.");
+        toast.error("Access denied! Your account is inactive.");
         return;
       }
 
@@ -77,7 +94,8 @@ const Sign = () => {
       const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
-      let role = "User"; // Default role
+      let role = "User";
+			let status = "Active";
 
       if (!userDoc.exists()) {
         // If new user, create document
@@ -86,6 +104,7 @@ const Sign = () => {
           email: user.email,
           createdAt: serverTimestamp(),
           role: "User",
+					status: "Active",
         });
 
         toast.success("Google Sign Up successful!");
@@ -94,13 +113,15 @@ const Sign = () => {
         // If existing user, retrieve role from Firestore
         const userData = userDoc.data();
         role = userData.role || "user";
-        toast.success("Google Sign In successful!");
+				status = userData.status || "Active";
+				if(status === "Active") toast.success("Google Sign In successful!");
       }
 
       // Redirect based on role
-      if (role === "Admin") navigate("/admindash");
-      else if (role === "Owner") navigate("/ownerdash");
-      else navigate("/");
+      if ((role === "Admin") & (status === "Active")) navigate("/admindash");
+      else if ((role === "Owner") & (status === "Active")) navigate("/ownerdash");
+      else if ((role === "User") & (status === "Active")) navigate("/");
+			else toast.error("You have been blocked by the Admin")
     } catch (error) {
       toast.error("Google Sign In failed: " + error.message);
     }

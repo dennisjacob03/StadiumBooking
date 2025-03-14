@@ -64,7 +64,7 @@ const Users = () => {
 
   return (
     <div className="users-container">
-      <Adminnavbar></Adminnavbar>
+      <Adminnavbar />
       <div className="users">
         <h2>Users List</h2>
         <table>
@@ -96,6 +96,7 @@ const Users = () => {
                   <select
                     value={user.role || "User"}
                     onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                    disabled={user.role === "Admin"} // Disable for Admin users
                   >
                     <option value="User">User</option>
                     <option value="Owner">Owner</option>
@@ -104,19 +105,25 @@ const Users = () => {
                 </td>
                 <td>{user.status}</td>
                 <td className="action-btn">
-                  {user.status === "Active" ? (
-                    <button
-                      className="inactive-btn"
-                      onClick={() => handleStatusChange(user.id, "Inactive")}
-                    >
-                      Inactive
-                    </button>
+                  {user.role !== "Admin" ? ( // Disable buttons for Admin users
+                    user.status === "Active" ? (
+                      <button
+                        className="inactive-btn"
+                        onClick={() => handleStatusChange(user.id, "Inactive")}
+                      >
+                        Inactive
+                      </button>
+                    ) : (
+                      <button
+                        className="active-btn"
+                        onClick={() => handleStatusChange(user.id, "Active")}
+                      >
+                        Active
+                      </button>
+                    )
                   ) : (
-                    <button
-                      className="active-btn"
-                      onClick={() => handleStatusChange(user.id, "Active")}
-                    >
-                      Active
+                    <button className="disabled-btn" disabled>
+                      Disabled
                     </button>
                   )}
                 </td>

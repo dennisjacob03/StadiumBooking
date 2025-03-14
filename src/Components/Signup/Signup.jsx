@@ -16,7 +16,6 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
     agreeToTerms: false,
-		role: "User"
   });
 
   const [loading, setLoading] = useState(false);
@@ -56,16 +55,15 @@ const Signup = () => {
       setLoading(true);
       const { user } = await signup(formData.email, formData.password);
 
-      // Send email verification
       await sendEmailVerification(user);
       toast.info("Verification email sent! Please check your inbox.");
 
-      // Store user data in Firestore
       await setDoc(doc(db, "users", user.uid), {
         username: formData.username.trim(),
         email: formData.email,
         createdAt: serverTimestamp(),
-				role: formData.role,
+        role: "User",
+        status: "Active",
       });
 
       setLoading(false);
@@ -76,42 +74,47 @@ const Signup = () => {
     }
   };
 
-  // Google Signup with user logout to avoid session conflicts
   const handleGoogleSignup = async () => {
     try {
       setLoading(true);
 
-      // Sign out the current user to allow a new user to sign up
       if (auth.currentUser) {
         await auth.signOut();
       }
 
-      // Sign in with Google
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
-			let role = "User";
+      let role = "User";
+      let status = "Active";
 
       if (userDoc.exists()) {
-				const userData = userDoc.data();
+        const userData = userDoc.data();
         role = userData.role || "User";
-				toast.success("Google Sign In successful!");
-        toast.info("You already had an account.");
+        status = userData.status || "Active";
+        if(status === "Active") toast.success("Google Sign In successful!");
       } else {
         await setDoc(userDocRef, {
           username: user.displayName || "",
           email: user.email,
           createdAt: serverTimestamp(),
-          role: formData.role,
+          role: "User",
+          status: "Active",
         });
-
         toast.success("Google Sign Up successful!");
       }
-			if (role === "Admin") navigate("/admindash");
-      else if (role === "Owner") navigate("/ownerdash");
-      else navigate("/");
+
+      if (status !== "Active") {
+        toast.error("You have been blocked by the Admin");
+      } else if (role === "Admin") {
+        navigate("/admindash");
+      } else if (role === "Owner") {
+        navigate("/ownerdash");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       toast.error("Google Sign Up failed: " + error.message);
     }

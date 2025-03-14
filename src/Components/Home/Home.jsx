@@ -1,22 +1,45 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { db } from "../../firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import "./Home.css";
-import event1 from "../../assets/event1.jpg";
-import event2 from "../../assets/event2.jpg";
-import event3 from "../../assets/event3.jpg";
-import event4 from "../../assets/event4.jpg";
-import event5 from "../../assets/event5.jpg";
-import event6 from "../../assets/event6.jpg";
-import event7 from "../../assets/event7.jpg";
-import event8 from "../../assets/event8.jpg";
-
 
 const Home = () => {
+  const [events, setEvents] = useState([]);
+	const [stadiums, setStadiums] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const eventsRef = collection(db, "events");
+        const q = query(eventsRef, where("status", "==", 1));
+        const snapshot = await getDocs(q);
+        const eventList = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+				const stadiumsRef = collection(db, "stadiums");
+								const stadiumsSnapshot = await getDocs(stadiumsRef);
+								const stadiumData = {};
+								stadiumsSnapshot.docs.forEach((doc) => {
+									stadiumData[doc.id] = doc.data().stadium_name;
+								});
+								
+        setStadiums(stadiumData);
+        setEvents(eventList);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+      setLoading(false);
+    };
+    fetchEvents();
+  }, []);
+
   return (
     <div className="home">
-      <Navbar></Navbar>
-
+      <Navbar />
       <div className="hero container">
         <div className="hero-combined">
           <div className="hero-text">
@@ -70,36 +93,38 @@ const Home = () => {
         </div>
       </div>
 
-
       <div className="event-box container">
         <div className="events">
-          <div className="event">
-            <img src={event1} alt="" />
-          </div>
-          <div className="event">
-            <img src={event2} alt="" />
-          </div>
-          <div className="event">
-            <img src={event3} alt="" />
-          </div>
-          <div className="event">
-            <img src={event4} alt="" />
-          </div>
-          <div className="event">
-            <img src={event5} alt="" />
-          </div>
-          <div className="event">
-            <img src={event6} alt="" />
-          </div>
-          <div className="event">
-            <img src={event7} alt="" />
-          </div>
-          <div className="event">
-            <img src={event8} alt="" />
-          </div>
+          {loading ? (
+            <p>Loading events...</p>
+          ) : (
+            events.map((event) => (
+              <div className="event" key={event.id}>
+                <div className="image-section">
+                  <img src={event.event_poster} alt={event.event_name} />
+                </div>
+                <div className="content">
+                  <p className="head">
+                    {event.team1} vs {event.team2}
+                    <br />| {event.sport}
+                  </p>
+                  <br />
+									<div className="other-content">
+										<i className="fa-solid fa-calendar-days"></i>
+										<p>{new Date(event.date_time).toLocaleString()}</p>
+									</div>
+									<div className="other-content">
+                    <i className="fa-solid fa-map-marker-alt"></i>
+                  <p>{stadiums[event.stadium_id] || "Unknown Stadium"}
+                  </p>
+									</div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
-      <Footer></Footer>
+      <Footer />
     </div>
   );
 };
