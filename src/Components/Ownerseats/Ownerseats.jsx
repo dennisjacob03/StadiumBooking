@@ -147,6 +147,8 @@ const Ownerseats = () => {
 
   return (
     <div className="ownerseats">
+			<Ownernavbar />
+			<div className="seats-container"></div>
     </div>
   );
 };

@@ -84,7 +84,7 @@ const Ownernavbar = () => {
                     Hi, {userData?.username || "Guest"}
                   </span>
                   <div className="on-hover">
-                    <Link to="/profile" className="profile-link">
+                    <Link to="/ownerprofile" className="profile-link">
                       My Profile
                     </Link>
                     <hr />

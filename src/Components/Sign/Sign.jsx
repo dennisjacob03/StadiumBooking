@@ -42,7 +42,20 @@ const Sign = () => {
         setError("No account found. Please sign up.");
         return;
       }
-
+			let role = "User";
+      let status = "Active";
+			if (userDoc.exists()) {
+        // If new user, create document
+        const userData = userDoc.data();
+        role = userData.role || "user";
+        status = userData.status || "Active";
+        if (status === "Active") toast.success("Login successful!");
+			if ((role === "Admin") & (status === "Active")) navigate("/admindash");
+      else if ((role === "Owner") & (status === "Active"))
+        navigate("/ownerdash");
+      else if ((role === "User") & (status === "Active")) navigate("/");
+      else toast.error("You have been blocked by the Admin");
+      }
       const userData = userDoc.data();
       if (userData.status !== "Active") {
         setLoading(false);
@@ -51,8 +64,6 @@ const Sign = () => {
         return;
       }
 
-      toast.success("Login successful!");
-      navigate("/");
     } catch (error) {
       switch (error.code) {
         case "auth/user-not-found":

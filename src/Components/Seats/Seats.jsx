@@ -65,9 +65,9 @@ const Seats = () => {
     }
   };
   return (
-    <div className="seats-container">
+    <div className="seats container">
       <Adminnavbar></Adminnavbar>
-      <div className="home-box">
+      <div className="seats-container">
         <div className="main-box">
           <div className="main 1">
             <h1>Seats</h1>

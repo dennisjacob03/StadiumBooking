@@ -21,7 +21,7 @@ const Stadiums = () => {
       try {
         const stadiumsQuery = query(
           collection(db, "stadiums"),
-          where("status", "==", 1) // Fetch only active stadiums
+          where("status", "==", 1)
         );
         const stadiumsCollection = await getDocs(stadiumsQuery);
         const stadiumList = stadiumsCollection.docs.map((doc) => ({
@@ -37,7 +37,6 @@ const Stadiums = () => {
     fetchStadiums();
   }, []);
 
-  // Function to update stadium approval status
   const handleUpdateStatus = async (id, approval) => {
     try {
       const stadiumRef = doc(db, "stadiums", id);
@@ -63,7 +62,7 @@ const Stadiums = () => {
     <div className="stadiums">
       <Adminnavbar />
       <div className="stadiums-container">
-        <h2>Stadium Requests</h2>
+        <h2>Manage Stadiums</h2>
         <table>
           <thead>
             <tr>

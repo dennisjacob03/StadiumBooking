@@ -20,7 +20,9 @@ import Ownerevents from "./Components/Ownerevents/Ownerevents";
 import Ownerstadiums from "./Components/Ownerstadiums/Ownerstadiums";
 import 	Ownerbookings from "./Components/Ownerbookings/Ownerbookings";
 import 	Ownerseats from "./Components/Ownerseats/Ownerseats";
-
+import Eventdetails from "./Components/Eventdetails/Eventdetails";
+import Ownerprofile from "./Components/Ownerprofile/Ownerprofile";
+import Adminprofile from "./Components/Adminprofile/Adminprofile";
 
 const App = () => {
   return (
@@ -45,7 +47,10 @@ const App = () => {
           <Route path="/Ownerevents" element={<Ownerevents />} />
           <Route path="/ownerstadiums" element={<Ownerstadiums />} />
           <Route path="/ownerbookings" element={<Ownerbookings />} />
-					<Route path="/ownerseats" element={<Ownerseats />} />
+          <Route path="/ownerseats" element={<Ownerseats />} />
+          <Route path="/eventdetails/:eventId" element={<Eventdetails />} />
+					<Route path="/ownerprofile" element={<Ownerprofile />}/>
+					<Route path="/adminprofile" element={<Adminprofile />}/>
         </Routes>
       </AuthProvider>
     </Router>

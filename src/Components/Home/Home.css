@@ -167,7 +167,7 @@ a {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: left;
 	background-color: #fff;
 	padding: 40px;
 	color: black;
@@ -195,7 +195,7 @@ a {
 	flex-basis: 22%;
 	height: 500px;
 	width: 260px;
-	margin: 20px 0px;
+	margin: 20px 17px;
 	border-radius: 10px;
 	border: 1px solid rgba(0, 0, 0, 0.266);
 }

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useAuth } from "../../contexts/AuthContext";
 import { db } from "../../firebase";
 import {
   collection,
@@ -9,8 +11,6 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { toast } from "react-toastify";
-import { useAuth } from "../../contexts/AuthContext";
 import Ownernavbar from "../Ownernavbar/Ownernavbar";
 import "./Ownerstadiums.css";
 
@@ -37,10 +37,8 @@ const Ownerstadiums = () => {
 
       try {
         const stadiumsRef = collection(db, "stadiums");
-        const q = query(stadiumsRef, where("ownerId", "==", currentUser.uid),where("status", "==", 1) // Fetch only active stadiums
-				);
+        const q = query(stadiumsRef, where("ownerId", "==", currentUser.uid),where("status", "==", 1));
         const snapshot = await getDocs(q);
-
         const stadiumList = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -76,7 +74,7 @@ const Ownerstadiums = () => {
     if (!window.confirm("Are you sure you want to delete this stadium?"))
       return;
     try {
-      await updateDoc(doc(db, "stadiums", id), { status: 0 }); // Soft delete
+      await updateDoc(doc(db, "stadiums", id), { status: 0 });
       setStadiums(stadiums.filter((stadium) => stadium.id !== id));
       toast.success("Stadium deleted!");
     } catch (error) {
@@ -107,7 +105,6 @@ const Ownerstadiums = () => {
       return;
     }
     try {
-					// Check if stadium with the same name and status=1 already exists
 					const stadiumsRef = collection(db, "stadiums");
 					const q = query(
 						stadiumsRef,
@@ -182,113 +179,118 @@ const Ownerstadiums = () => {
         {loading ? (
           <p>Loading stadiums...</p>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>SI No.</th>
-                <th>Layout</th>
-                <th>Name</th>
-                <th>Location</th>
-                <th>Capacity</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stadiums.map((stadium, index) => (
-                <tr key={stadium.id}>
-                  <td>{index + 1}</td>
-                  <td>
-                    <img
-                      src={stadium.layout || "https://via.placeholder.com/50"}
-                      alt="Stadium Layout"
-                      className="stadium-img"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={stadium.stadium_name}
-                      disabled={!editMode[stadium.id]}
-                      onChange={(e) =>
-                        setStadiums(
-                          stadiums.map((s) =>
-                            s.id === stadium.id
-                              ? { ...s, stadium_name: e.target.value }
-                              : s
-                          )
-                        )
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={stadium.location}
-                      disabled={!editMode[stadium.id]}
-                      onChange={(e) =>
-                        setStadiums(
-                          stadiums.map((s) =>
-                            s.id === stadium.id
-                              ? { ...s, location: e.target.value }
-                              : s
-                          )
-                        )
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={stadium.capacity}
-                      disabled={!editMode[stadium.id]}
-                      onChange={(e) =>
-                        setStadiums(
-                          stadiums.map((s) =>
-                            s.id === stadium.id
-                              ? { ...s, capacity: e.target.value }
-                              : s
-                          )
-                        )
-                      }
-                    />
-                  </td>
-                  <td className="status">
-                    <span
-                      className={
-                        stadium.approval === "Approved" ? "approved" : "pending"
-                      }
-                    >
-                      {stadium.approval}
-                    </span>
-                  </td>
-                  <td className="actions">
-                    {editMode[stadium.id] ? (
-                      <button
-                        className="save"
-                        onClick={() => handleSaveClick(stadium.id, stadium)}
-                      >
-                        <i class="material-icons save">save</i>
-                      </button>
-                    ) : (
-                      <button
-                        className="edit"
-                        onClick={() => handleEditClick(stadium.id)}
-                      >
-                        <i class="material-icons edit">edit</i>
-                      </button>
-                    )}
-                    <button
-                      className="delete"
-                      onClick={() => handleDeleteStadium(stadium.id)}
-                    >
-                      <i class="material-icons delete">delete</i>
-                    </button>
-                  </td>
+          <div className="stadiums">
+            <h2>Stadiums List</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>SI No.</th>
+                  <th>Layout</th>
+                  <th>Name</th>
+                  <th>Location</th>
+                  <th>Capacity</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {stadiums.map((stadium, index) => (
+                  <tr key={stadium.id}>
+                    <td>{index + 1}</td>
+                    <td>
+                      <img
+                        src={stadium.layout || "https://via.placeholder.com/50"}
+                        alt="Stadium Layout"
+                        className="stadium-img"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={stadium.stadium_name}
+                        disabled={!editMode[stadium.id]}
+                        onChange={(e) =>
+                          setStadiums(
+                            stadiums.map((s) =>
+                              s.id === stadium.id
+                                ? { ...s, stadium_name: e.target.value }
+                                : s
+                            )
+                          )
+                        }
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={stadium.location}
+                        disabled={!editMode[stadium.id]}
+                        onChange={(e) =>
+                          setStadiums(
+                            stadiums.map((s) =>
+                              s.id === stadium.id
+                                ? { ...s, location: e.target.value }
+                                : s
+                            )
+                          )
+                        }
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        value={stadium.capacity}
+                        disabled={!editMode[stadium.id]}
+                        onChange={(e) =>
+                          setStadiums(
+                            stadiums.map((s) =>
+                              s.id === stadium.id
+                                ? { ...s, capacity: e.target.value }
+                                : s
+                            )
+                          )
+                        }
+                      />
+                    </td>
+                    <td className="status">
+                      <span
+                        className={
+                          stadium.approval === "Approved"
+                            ? "approved"
+                            : "pending"
+                        }
+                      >
+                        {stadium.approval}
+                      </span>
+                    </td>
+                    <td className="actions">
+                      {editMode[stadium.id] ? (
+                        <button
+                          className="save"
+                          onClick={() => handleSaveClick(stadium.id, stadium)}
+                        >
+                          <i class="material-icons save">save</i>
+                        </button>
+                      ) : (
+                        <button
+                          className="edit"
+                          onClick={() => handleEditClick(stadium.id)}
+                        >
+                          <i class="material-icons edit">edit</i>
+                        </button>
+                      )}
+                      <button
+                        className="delete"
+                        onClick={() => handleDeleteStadium(stadium.id)}
+                      >
+                        <i class="material-icons delete">delete</i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

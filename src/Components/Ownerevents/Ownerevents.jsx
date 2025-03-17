@@ -228,6 +228,8 @@ const Ownerevents = () => {
         {loading ? (
           <p>Loading events...</p>
         ) : (
+          <div className="events">
+            <h2>Events List</h2>
           <table>
             <thead>
               <tr>
@@ -369,6 +371,7 @@ const Ownerevents = () => {
               ))}
             </tbody>
           </table>
+				</div>
         )}
       </div>
     </div>

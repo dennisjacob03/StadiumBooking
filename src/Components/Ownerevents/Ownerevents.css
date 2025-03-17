@@ -1,7 +1,7 @@
 .ownerevents{
 	font-family: 'Poppins', sans-serif;
 	color: #000000;
-	background-color: #ffffff;
+	background-color: #22553b;
 	width: 100%;
 	min-height: 100vh;
 	display: flex;
@@ -31,14 +31,12 @@
   font-weight: bold;
 }
 .events-container {
-  min-width: 60%;
+  min-width: 75%;
 	height: auto;
   margin: 110px 40px auto 0;
-  background: #22553b;
   padding: 20px;
 	color: black;
   border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(243, 187, 187, 0.2);
 	display: flex;
 	flex-direction: column;
 h2,h3 {
@@ -66,7 +64,6 @@ h3{
 
 .add-event button {
   padding: 8px 12px;
-  background-color: #5cb85c;
   color: white;
   border: none;
   border-radius: 4px;
@@ -133,7 +130,7 @@ input {
 .ownerevents {
   font-family: 'Poppins', sans-serif;
   color: #ffffff;
-  background-color: #ffffff;
+  background-color: #22553b;
   width: 100%;
   min-height: 100vh;
   display: flex;
@@ -165,24 +162,24 @@ a {
   font-weight: bold;
 }
 
-.events-container {
-  width: 90%;
+.events {
+  width: 100%;
   max-width: 1200px;
-  background: #22553b;
+  background: #ffffff;
   padding: 20px;
   color: black;
   border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(243, 187, 187, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
+	margin-top: 30px;
 h2, h3 {
   text-align: center;
-  color: white;
+  color: rgb(0, 0, 0);
   margin-bottom: 20px;
 }
+}
+
 
 h3 {
   margin-top: 50px;

@@ -1,15 +1,10 @@
 .ownerstadiums{
 	font-family: 'Poppins', sans-serif;
 	color: #ffffff;
-	background-color: #ffffff;
-	width: 100%;
+	background-color: #22553b;
+	width: auto;
 	min-height: 100vh;
 	display: flex;
-.side-nav h2 {
-	text-align: left;
-	color: white;
-	margin-bottom: 0;
-}
 	a {
   text-decoration: none;
   color: inherit;
@@ -31,26 +26,22 @@
   font-weight: bold;
 }
 .stadiums-container {
-  min-width: 70%;
+  min-width: 75%;
 	width: auto;
 	height: auto;
   margin: 110px 40px auto 0;
-  background: #22553b;
-  padding: 20px;
 	color: black;
-  border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(243, 187, 187, 0.2);
-	display: flex;
-	flex-direction: column;
 h2 {
   text-align: center;
 	color: white;
+	margin-bottom: 20px;
 }
 
 .add-stadium {
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
+	padding: 0 30px;
 }
 
 .add-stadium input {
@@ -58,6 +49,8 @@ h2 {
   border: 1px solid #ccc;
   border-radius: 4px;
   flex: 1;
+	outline-style: none;
+	font-size: 14px;
 }
 
 .add-stadium button {
@@ -69,10 +62,27 @@ h2 {
   cursor: pointer;
 }
 
+.stadiums{
+  width: auto;
+	min-width: 100%;
+	height: auto;
+	color: black;
+  margin: 50px 40px auto 0;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-direction: column;
+h2 {
+  text-align: center;
+	color: black;
+	margin-bottom: 20px;
+}
 table {
   width: 100%;
-  margin-top: 10px;
-	background-color: #fff;
+  background: white;
+  overflow: hidden;
 }
 
 th, td {
@@ -81,14 +91,16 @@ th, td {
   border-bottom: 1px solid #ddd;
 }
 
-th {
+thead {
   background-color: #22553b;
   color: white;
+}
 }
 
 input {
   width: 100%;
   padding: 6px;
+	font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
@@ -99,18 +111,6 @@ input {
   border-radius: 5px;
 }
 
-.delete-btn,.btns {
-  padding: 6px 12px;
-  background-color: #2f363e;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-	margin: 2px;
-}
-.deletebtn{
-	color: red;
-}
 .status span{
 	background-color: #22553b;
 	border-radius: 4px;
@@ -118,17 +118,7 @@ input {
 	color: rgb(255, 255, 255);
 }
 
-.delete-btn:hover{
-	background-color: #832204;
-}
-.btns:hover {
-  background-color: #24292d;
-}
-
-}
-
 .actions button{
-	height: 100%;
 	background-color: #fff;
 	border-radius: 4px;
 	margin: 4px;
@@ -145,4 +135,6 @@ input {
 	color: rgb(5, 133, 158);
 	border-color: rgb(5, 133, 158);
 }
+}
+
 }

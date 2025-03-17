@@ -35,9 +35,8 @@ const Profile = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [showPhonePopup, setShowPhonePopup] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState("");	
 
-  // Add loading states for specific operations
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isVerifyingPhone, setIsVerifyingPhone] = useState(false);
 
@@ -360,13 +359,8 @@ const Profile = () => {
         <div className="otheredits">
           <div className="edit">
             <button type="button" onClick={handleChangePassword}>
-              {userData?.password?.length > 0
-                ? "Change Password"
-                : "Add Password"}
+							Add/Change Password
             </button>
-          </div>
-          <div className="edit">
-            <button>Delete Acoount</button>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { db } from "../../firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
+import { Link } from "react-router-dom";
 import "./Home.css";
 
 const Home = () => {
@@ -14,7 +15,11 @@ const Home = () => {
     const fetchEvents = async () => {
       try {
         const eventsRef = collection(db, "events");
-        const q = query(eventsRef, where("status", "==", 1));
+        const q = query(
+          eventsRef,
+          where("status", "==", 1),
+          where("approval", "==", "Approved")
+        );
         const snapshot = await getDocs(q);
         const eventList = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -96,29 +101,32 @@ const Home = () => {
       <div className="event-box container">
         <div className="events">
           {loading ? (
-            <p>Loading events...</p>
+            <span className="loading">
+              <p>Loading events...</p>
+            </span>
           ) : (
             events.map((event) => (
               <div className="event" key={event.id}>
-                <div className="image-section">
-                  <img src={event.event_poster} alt={event.event_name} />
-                </div>
-                <div className="content">
-                  <p className="head">
-                    {event.team1} vs {event.team2}
-                    <br />| {event.sport}
-                  </p>
-                  <br />
-									<div className="other-content">
-										<i className="fa-solid fa-calendar-days"></i>
-										<p>{new Date(event.date_time).toLocaleString()}</p>
-									</div>
-									<div className="other-content">
-                    <i className="fa-solid fa-map-marker-alt"></i>
-                  <p>{stadiums[event.stadium_id] || "Unknown Stadium"}
-                  </p>
-									</div>
-                </div>
+                <Link to={`/eventdetails/${event.id}`}>
+                  <div className="image-section">
+                    <img src={event.event_poster} alt={event.event_name} />
+                  </div>
+                  <div className="content">
+                    <p className="head">
+                      {event.team1} vs {event.team2}
+                      <br />| {event.sport}
+                    </p>
+                    <br />
+                    <div className="other-content">
+                      <i className="fa-solid fa-calendar-days"></i>
+                      <p>{new Date(event.date_time).toLocaleString()}</p>
+                    </div>
+                    <div className="other-content">
+                      <i className="fa-solid fa-map-marker-alt"></i>
+                      <p>{stadiums[event.stadium_id] || "Unknown Stadium"}</p>
+                    </div>
+                  </div>
+                </Link>
               </div>
             ))
           )}
