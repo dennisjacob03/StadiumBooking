@@ -12,9 +12,9 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import Ownernavbar from "../Ownernavbar/Ownernavbar";
-import "./Ownerseats.css";
+import "./Ownercategory.css";
 
-const Ownerseats = () => {
+const Ownercategory = () => {
   const { currentUser } = useAuth();
   const [stadiums, setStadiums] = useState([]);
   const [stadiumCategories, setStadiumCategories] = useState([]);
@@ -133,9 +133,9 @@ const handleAddCategory = async () => {
   }));
 
   return (
-    <div className="ownerseats">
+    <div className="ownercategory">
       <Ownernavbar />
-      <div className="seats-container">
+      <div className="category-container">
         <h2>Add Stadium Category</h2>
         <div className="add-category">
           <select
@@ -220,4 +220,4 @@ const handleAddCategory = async () => {
   );
 };
 
-export default Ownerseats;
+export default Ownercategory;

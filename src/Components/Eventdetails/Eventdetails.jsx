@@ -4,6 +4,8 @@ import { db } from "../../firebase";
 import { getDoc, doc, collection, getDocs } from "firebase/firestore";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
+import { Link } from "react-router-dom";
+
 import "./Eventdetails.css";
 
 const Eventdetails = () => {
@@ -84,9 +86,11 @@ const Eventdetails = () => {
                   <div className="price">
                     <p>Price: ₹{event.base_price}</p>
                   </div>
-                  <button onClick={handleBook} className="btn book-btn">
-                    BOOK NOW
-                  </button>
+                  <Link to={`/stadiumbook`}>
+                    <button onClick={handleBook} className="btn book-btn">
+                      BOOK NOW
+                    </button>
+                  </Link>
                 </div>
               </div>
             </div>

@@ -120,7 +120,7 @@ const Adminnavbar = () => {
               <Link to="/Events">Events</Link>
             </li>
             <li>
-              <Link to="/Bookings">Bookings</Link>
+              <Link to="/admincategory">Category</Link>
             </li>
             <li>
               <Link to="/Seats">Seats</Link>

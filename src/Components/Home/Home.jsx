@@ -8,9 +8,12 @@ import "./Home.css";
 
 const Home = () => {
   const [events, setEvents] = useState([]);
+	const [filteredEvents, setFilteredEvents] = useState([]);
 	const [stadiums, setStadiums] = useState({});
   const [loading, setLoading] = useState(true);
-
+	const [searchQuery, setSearchQuery] = useState("");
+	const [selectedCity, setSelectedCity] = useState("all");
+	const [selectedDate, setSelectedDate] = useState("");
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -25,15 +28,19 @@ const Home = () => {
           id: doc.id,
           ...doc.data(),
         }));
-				const stadiumsRef = collection(db, "stadiums");
-								const stadiumsSnapshot = await getDocs(stadiumsRef);
-								const stadiumData = {};
-								stadiumsSnapshot.docs.forEach((doc) => {
-									stadiumData[doc.id] = doc.data().stadium_name;
-								});
-								
+        const stadiumsRef = collection(db, "stadiums");
+        const stadiumsSnapshot = await getDocs(stadiumsRef);
+        const stadiumData = {};
+        stadiumsSnapshot.docs.forEach((doc) => {
+          stadiumData[doc.id] = {
+            name: doc.data().stadium_name,
+            city: doc.data().location.toLowerCase(),
+          };
+        });
+
         setStadiums(stadiumData);
         setEvents(eventList);
+        setFilteredEvents(eventList); // Initially, show all events
       } catch (error) {
         console.error("Error fetching events:", error);
       }
@@ -42,6 +49,43 @@ const Home = () => {
     fetchEvents();
   }, []);
 
+	const handleSearch = (e) => {
+    e.preventDefault();
+    let filtered = events;
+
+    // Search by sport, event name, or team name
+    if (searchQuery.trim() !== "") {
+      filtered = filtered.filter((event) => {
+        const stadiumName = stadiums[event.stadium_id]?.name || "";
+				const stadiumCity = stadiums[event.stadium_id]?.city || "";
+        return (
+          event.sport.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          event.event_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          event.team1.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          event.team2.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          stadiumName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+					stadiumCity.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      });
+    }
+
+    // Filter by city (if not 'all')
+    if (selectedCity !== "all") {
+      filtered = filtered.filter(
+        (event) =>
+          stadiums[event.stadium_id]?.city === selectedCity.toLowerCase()
+      );
+    }
+
+    // Filter by date
+    if (selectedDate !== "") {
+      filtered = filtered.filter(
+        (event) => event.date_time.split("T")[0] === selectedDate
+      );
+    }
+
+    setFilteredEvents(filtered);
+  };
   return (
     <div className="home">
       <Navbar />
@@ -55,9 +99,14 @@ const Home = () => {
           </div>
           <div className="filter">
             <div className="filter-form">
-              <form className="form-items">
+              <form className="form-items" onClick={handleSearch}>
                 <div className="search">
-                  <input type="search" placeholder="Search for Sports" />
+                  <input
+                    type="search"
+                    placeholder="Search for Sports, Teams, Stadiums..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
                   <button type="submit">
                     <i className="fa-solid fa-magnifying-glass"></i>
                   </button>
@@ -68,7 +117,11 @@ const Home = () => {
                     <i className="fa-solid fa-city"></i>
                   </div>
                   <span className="type">City</span>
-                  <select className="select-bar">
+                  <select
+                    className="select-bar"
+                    value={selectedCity}
+                    onChange={(e) => setSelectedCity(e.target.value)}
+                  >
                     <option value="all">All</option>
                     <option value="ahmedabad">Ahmedabad</option>
                     <option value="bangalore">Bangalore</option>
@@ -90,7 +143,12 @@ const Home = () => {
                     <i className="fa-solid fa-calendar-days"></i>
                   </div>
                   <span className="type">Date</span>
-                  <input type="date" className="date" />
+                  <input
+                    type="date"
+                    className="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                  />
                 </div>
               </form>
             </div>
@@ -104,8 +162,8 @@ const Home = () => {
             <span className="loading">
               <p>Loading events...</p>
             </span>
-          ) : (
-            events.map((event) => (
+          ) : filteredEvents.length > 0 ? (
+            filteredEvents.map((event) => (
               <div className="event" key={event.id}>
                 <Link to={`/eventdetails/${event.id}`}>
                   <div className="image-section">
@@ -123,12 +181,17 @@ const Home = () => {
                     </div>
                     <div className="other-content">
                       <i className="fa-solid fa-map-marker-alt"></i>
-                      <p>{stadiums[event.stadium_id] || "Unknown Stadium"}</p>
+                      <p>
+                        {stadiums[event.stadium_id]?.name || "Unknown Stadium"}{" "}
+                        - {stadiums[event.stadium_id]?.city || "Unknown City"}
+                      </p>
                     </div>
                   </div>
                 </Link>
               </div>
             ))
+          ) : (
+            <p>No events found for your search criteria.</p>
           )}
         </div>
       </div>

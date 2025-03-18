@@ -50,7 +50,7 @@ const Ownerevents = () => {
 					}));
 					setStadiums(stadiumList);
 				} catch (error) {
-					console.error("Error fetching stadiums:", error);
+					toast.error("Error fetching stadiums:", error);
 				}
 			};
     const fetchEvents = async () => {
@@ -68,7 +68,7 @@ const Ownerevents = () => {
         }));
         setEvents(eventList);
       } catch (error) {
-        console.error("Error fetching events:", error);
+        toast.error("Error fetching events:", error);
         toast.error("Failed to load events.");
       }
       setLoading(false);
@@ -135,7 +135,7 @@ const Ownerevents = () => {
       });
       toast.success("Event added successfully! Awaiting admin approval.");
     } catch (error) {
-      console.error("Error adding event:", error);
+      toast.error("Error adding event:", error);
       toast.error("Failed to add event.");
     }
   };

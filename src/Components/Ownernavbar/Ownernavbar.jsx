@@ -120,7 +120,7 @@ const Ownernavbar = () => {
             <Link to="/Ownerbookings">Bookings</Link>
           </li> */}
           <li>
-            <Link to="/Ownerseats">Seats</Link>
+            <Link to="/Ownercategory">Category</Link>
           </li>
         </ul>
       </div>
