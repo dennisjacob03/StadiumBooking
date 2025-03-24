@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { db } from "../../firebase";
@@ -380,30 +382,69 @@ const Profile = () => {
       {showPhonePopup && (
         <div className="popup-overlay">
           <div className="popup-box">
+            <div className="cancle">
+              <div
+                className="cancle-btn"
+                onClick={() => setShowPhonePopup(false)}
+              >
+                <svg
+                  onClick={() => setShowPhonePopup(false)}
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="30"
+                  height="30"
+                  viewBox="3 3 18 18"
+                  fill="none"
+                  stroke="black"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="8" stroke="black" fill="white" />
+                  <line x1="15" y1="9" x2="9" y2="15" />
+                  <line
+                    onClick={() => setShowPhonePopup(false)}
+                    x1="9"
+                    y1="9"
+                    x2="15"
+                    y2="15"
+                  />
+                </svg>
+              </div>
+            </div>
+
             <h3>Enter Phone Number</h3>
-            <input
-              type="tel"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="Enter phone number"
-              pattern="[0-9]{10}"
-            />
-            <button onClick={handleSendOtp} disabled={isVerifyingPhone}>
-              {isVerifyingPhone ? "Sending..." : "Send OTP"}
-            </button>
-            <input
-              type="text"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              placeholder="Enter OTP"
-            />
-            <button onClick={handleVerifyOtp} disabled={isVerifyingPhone}>
-              {isVerifyingPhone ? "Verifying..." : "Verify OTP"}
-            </button>
-            <button onClick={handleResendOtp} disabled={isVerifyingPhone}>
-              Resend OTP
-            </button>
-            <button onClick={() => setShowPhonePopup(false)}>Cancel</button>
+            <div className="popup-content">
+              <div className="pop-input">
+                <input
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder="Enter phone number"
+                  pattern="[0-9]{10}"
+                />
+              </div>
+              <div className="pop-btn">
+                <button onClick={handleSendOtp} disabled={isVerifyingPhone}>
+                  {isVerifyingPhone ? "Sending..." : "Send OTP"}
+                </button>
+                <button onClick={handleResendOtp} disabled={isVerifyingPhone}>
+                  Resend OTP
+                </button>
+              </div>
+              <div className="pop-input">
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="Enter OTP"
+                />
+              </div>
+              <div className="pop-btn">
+                <button onClick={handleVerifyOtp} disabled={isVerifyingPhone}>
+                  {isVerifyingPhone ? "Verifying..." : "Verify OTP"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
