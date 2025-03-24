@@ -1,0 +1,150 @@
+
+		.layout-full{
+      position: relative;
+			width: 40%;
+
+    .sect-0 {
+      fill: #ffffff;
+      stroke: #373534;
+      stroke-width: 3px;
+    }
+    .sect-1 {
+      fill: #bfe6f3;
+    }
+    .sect-2 {
+      fill: #d3e5a5;
+    }
+    .sect-3 {
+      fill: #ffc573;
+    }
+    .sect-4 {
+      fill: #ff99b3;
+    }
+    .sect-5 {
+      fill: #edc7f7;
+    }
+    .sect-6 {
+      fill: #e2ecfe;
+    }
+    .sect-7 {
+      fill: #f9b9b8;
+    }
+    .sect-8 {
+      fill: #cddbff;
+    }
+    .sect-9 {
+      fill: #c6e6de;
+    }.section-seatmap:hover > .sect-1 {
+  fill: #9dddf2;
+}
+.section-seatmap:hover > .sect-2 {
+  fill: #c5db8c;
+}
+.section-seatmap:hover > .sect-3 {
+  fill: #fab552;
+}
+.section-seatmap:hover > .sect-4 {
+  fill: #e6809a;
+}
+.section-seatmap:hover > .sect-5 {
+  fill: #d4aede;
+}
+.section-seatmap:hover > .sect-6 {
+  fill: #d5dff1;
+}
+.section-seatmap:hover > .sect-7 {
+  fill: #ecacab;
+}
+.section-seatmap:hover > .sect-8 {
+  fill: #c3d1f5;
+}
+.section-seatmap:hover > .sect-9 {
+  fill: #bcdcd4;
+}
+
+    .sold-out {
+      display: none;
+    }
+    .last-few {
+      display: none;
+    }
+    .popular {
+      display: none;
+    }
+    .sold-out-area {
+      fill: #bcbcbc !important;
+      fill-opacity: 20% !important;
+    }
+    .sold-out-area:hover {
+      fill: #bcbcbc !important;
+      fill-opacity: 20% !important;
+    }
+    .sold-out-label {
+      fill: #bcbcbc !important;
+      fill-opacity: 50% !important;
+    }
+    text {
+      font-family: basis-grotesque-pro, Montserrat, sans-serif;
+      font-weight: 700;
+      fill: #000;
+    }
+    .pitch {
+      fill: #ffeac7;
+      stroke: #ffffff;
+      stroke-width: 2px;
+    }
+    .sold-out-label path {
+      fill: #bcbcbc !important;
+      fill-opacity: 50% !important;
+    }
+    .section-label {
+      fill: #000000 !important;
+    }
+
+    .cls-1 {
+      fill: #c6e6de;
+    }
+
+    .cls-2 {
+      fill: #ff99b3;
+    }
+
+    .cls-3 {
+      fill: #231f20;
+    }
+
+    .cls-4 {
+      fill: #edc7f7;
+    }
+
+    .cls-5,
+    .cls-6,
+    .cls-7 {
+      fill: #bcbcbc;
+    }
+
+    .cls-5,
+    .cls-8 {
+      opacity: 0.5;
+    }
+
+    .cls-6 {
+      opacity: 0.2;
+    }
+
+    .cls-9 {
+      fill: #cddbff;
+    }
+
+    .cls-10 {
+      fill: #ffc573;
+    }
+
+    .cls-11 {
+      fill: #d3e5a5;
+    }
+
+    .cls-12 {
+      fill: #f9b9b8;
+    }
+  }

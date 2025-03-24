@@ -26,6 +26,8 @@ import Adminprofile from "./Components/Adminprofile/Adminprofile";
 import Stadiumbook from "./Components/Stadiumbook/Stadiumbook";
 import Ownercategory from "./Components/Ownercategory/Ownercategory";
 import Admincategory from "./Components/Admincategory/Admincategory";
+import Stadiumrgics from "./Components/Stadiumrgics/Stadiumrgics"
+import Seatbook from "./Components/Seatbook/Seatbook";
 
 const App = () => {
   return (
@@ -54,9 +56,11 @@ const App = () => {
           <Route path="/eventdetails/:eventId" element={<Eventdetails />} />
           <Route path="/ownerprofile" element={<Ownerprofile />} />
           <Route path="/adminprofile" element={<Adminprofile />} />
-          <Route path="/stadiumbook" element={<Stadiumbook />} />
+          <Route path="/stadiumbook/:eventId" element={<Stadiumbook />} />
           <Route path="/ownercategory" element={<Ownercategory />} />
           <Route path="/admincategory" element={<Admincategory />} />
+          <Route path="/stadiumrgics" element={<Stadiumrgics />} />
+          <Route path="/seatbook" element={<Seatbook />} />
         </Routes>
       </AuthProvider>
     </Router>

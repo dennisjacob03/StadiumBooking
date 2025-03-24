@@ -47,7 +47,7 @@ const Sign = () => {
 			if (userDoc.exists()) {
         // If new user, create document
         const userData = userDoc.data();
-        role = userData.role || "user";
+        role = userData.role || "User";
         status = userData.status || "Active";
         if (status === "Active") toast.success("Login successful!");
 			if ((role === "Admin") & (status === "Active")) navigate("/admindash");

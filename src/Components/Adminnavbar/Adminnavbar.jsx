@@ -66,67 +66,73 @@ const Adminnavbar = () => {
   };
   return (
     <div className="adminnavbar">
-        <div className="navbar">
-          <nav className="container dark-nav">
-            <img src={logo} alt="SpotOn" className="logo" />
-            <ul>
-              <li>
-                <div className="main-search">
-                  <input type="search" placeholder="Search" />
-                  <button className="btn">Search</button>
-                </div>
-              </li>
-              <li>
-                {currentUser ? (
-                  <div className="user-info">
-                    <span className="user">
-                      <img src={user} alt="user" />
-                      Hi, {userData?.username || "Guest"}
-                    </span>
-                    <div className="on-hover">
-                      <Link to="/adminprofile" className="profile-link">
-                        My Profile
-                      </Link>
-                      <hr />
+      <div className="navbar">
+        <nav className="container dark-nav">
+          <img src={logo} alt="SpotOn" className="logo" />
+          <ul>
+            <li>
+              <div className="main-search">
+                <input type="search" placeholder="Search" />
+                <button className="btn">Search</button>
+              </div>
+            </li>
+            <li>
+              {currentUser ? (
+                <div className="user-info">
+                  <span className="user">
+																			{userData?.profile_pic ? (
+																				<img src={userData?.profile_pic} alt="user" />
+																			) : (
+																				<img src={user} alt="user" />
+																			)}
+																			Hi, {userData?.username || "Guest"}
+																		</span>
+                  <div className="on-hover">
+                    <Link to="/adminprofile" className="profile-link">
+                      My Profile
+                    </Link>
+                    <hr />
+                    <Link to="/">
                       <button onClick={handleLogout} className="btn logout-btn">
                         Log Out
                       </button>
-                    </div>
+                    </Link>
                   </div>
-                ) : (
-                  <Link to="/Sign">
-                    <button className="btn">SIGN IN</button>
-                  </Link>
-                )}
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div className="side-nav">
-          <h2>Admin Dashboard</h2>
-          <ul>
-            <li>
-              <Link to="/AdminDash" className="active">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/Users">Users</Link>
-            </li>
-            <li>
-              <Link to="/Stadiums">Stadiums</Link>
-            </li>
-            <li>
-              <Link to="/Events">Events</Link>
-            </li>
-            <li>
-              <Link to="/admincategory">Category</Link>
-            </li>
-            <li>
-              <Link to="/Seats">Seats</Link>
+                </div>
+              ) : (
+                <Link to="/Sign">
+                  <button className="btn">SIGN IN</button>
+                </Link>
+              )}
             </li>
           </ul>
-        </div>
+        </nav>
+      </div>
+      <div className="side-nav">
+        <h2>Admin Dashboard</h2>
+        <ul>
+          <li>
+            <Link to="/AdminDash" className="active">
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link to="/Users">Users</Link>
+          </li>
+          <li>
+            <Link to="/Stadiums">Stadiums</Link>
+          </li>
+          <li>
+            <Link to="/Events">Events</Link>
+          </li>
+          <li>
+            <Link to="/admincategory">Category</Link>
+          </li>
+          <li>
+            <Link to="/Seats">Seats</Link>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 };

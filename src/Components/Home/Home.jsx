@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { db } from "../../firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import Navbar from "../Navbar/Navbar";
@@ -42,7 +43,7 @@ const Home = () => {
         setEvents(eventList);
         setFilteredEvents(eventList); // Initially, show all events
       } catch (error) {
-        console.error("Error fetching events:", error);
+        toast.error("Error fetching events:", error);
       }
       setLoading(false);
     };

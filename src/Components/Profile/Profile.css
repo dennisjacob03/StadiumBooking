@@ -55,17 +55,17 @@ a {
 .manage-links{
 	padding-left: 20px;
 }
-.profile-img img{
+.profile-img{ 
+	img{
 	border: 2px solid #006923;
 	height: 80px;
 	border-radius: 50%;
 	margin: 20px;
 }
-.profile-img button{
+button{
 	cursor: pointer;
 }
-.profile-img .default{
-	background-color: #eaeaea;
+.default,.change-photo{
 	height: 80px;
 	width: 80px;
 	border-radius: 50%;
@@ -75,11 +75,22 @@ a {
 	align-items: center;
 	justify-content: center;
 	margin: 20px;
+	position: absolute;
+	transform: translate(-0%, -155%);
+	font-weight: 600;
+	font-size: 20px;
+	background-color: #ffffff7d;
+	color: rgb(0, 0, 0);
+}
+.default{
+	font-size: 18px;
 }
 .default i{
 	font-size: 22px;
 	margin: 2px;
 }
+}
+
 hr{
 	width: 100%;
 }
@@ -127,6 +138,9 @@ hr{
 		margin-left: 10px;
 	}
 }
+	.email input{
+		width: 60%;
+	}
 .account-data,.main{
 	width: 100%;
 	text-align: center;

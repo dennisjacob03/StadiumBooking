@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { db } from "../../firebase";
 import { getDoc, doc, collection, getDocs } from "firebase/firestore";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import { Link } from "react-router-dom";
-
 import "./Eventdetails.css";
 
 const Eventdetails = () => {
@@ -21,10 +20,10 @@ const Eventdetails = () => {
         if (eventDoc.exists()) {
           setEvent(eventDoc.data());
         } else {
-          console.error("Event not found");
+          toast.error("Event not found");
         }
       } catch (error) {
-        console.error("Error fetching event details:", error);
+        toast.error("Error fetching event details:", error);
       }
     };
 
@@ -38,7 +37,7 @@ const Eventdetails = () => {
         });
         setStadiums(stadiumData);
       } catch (error) {
-        console.error("Error fetching stadiums:", error);
+        toast.error("Error fetching stadiums:", error);
       }
     };
 
@@ -86,7 +85,7 @@ const Eventdetails = () => {
                   <div className="price">
                     <p>Price: ₹{event.base_price}</p>
                   </div>
-                  <Link to={`/stadiumbook`}>
+                  <Link to={`/stadiumbook/${eventId}`}>
                     <button onClick={handleBook} className="btn book-btn">
                       BOOK NOW
                     </button>

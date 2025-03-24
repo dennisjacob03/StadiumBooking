@@ -9,177 +9,179 @@ import {
   updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { Link } from "react-router-dom";
-import { updatePassword, sendPasswordResetEmail } from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../../firebase";
+import { Link, useNavigate } from "react-router-dom";
+import { sendPasswordResetEmail } from "firebase/auth";
 import Adminnavbar from "../Adminnavbar/Adminnavbar";
 import "./Adminprofile.css";
+import user from "../../assets/user-default.png";
 
 const Adminprofile = () => {
-	const { currentUser, logout } = useAuth();
-		const [userData, setUserData] = useState({
-			username: "",
-			email: "",
-			phone: "",
-			DOB: "",
-			state: "",
-			address: "",
-			pincode: "",
-			profile_pic: "",
-		});
-	console.log(currentUser)
-		const [editMode, setEditMode] = useState(false);
-		const [loading, setLoading] = useState(false);
-		const [selectedFile, setSelectedFile] = useState(null);
-		const [showPhonePopup, setShowPhonePopup] = useState(false);
-		const [phoneNumber, setPhoneNumber] = useState("");
-		const [otp, setOtp] = useState("");
-	
-		// Add loading states for specific operations
-		const [isUploadingImage, setIsUploadingImage] = useState(false);
-		const [isVerifyingPhone, setIsVerifyingPhone] = useState(false);
-	
-		useEffect(() => {
-			const fetchUserData = async () => {
-				if (currentUser) {
-					const userRef = doc(db, "users", currentUser.uid);
-					const userSnap = await getDoc(userRef);
-					if (userSnap.exists()) {
-						setUserData(userSnap.data());
-					}
-				}
-			};
-	
-			fetchUserData();
-		}, [currentUser]);
-	
-		const handleEditProfile = async () => {
-			setEditMode(true);
-		};
-		const handleSubmitProfile = async (e) => {
-			e.preventDefault();
-			setLoading(true);
-	
-			try {
-				const userRef = doc(db, "users", currentUser.uid);
-				await updateDoc(userRef, {
-					username: userData.username,
-					DOB: userData.DOB,
-					state: userData.state,
-					address: userData.address,
-					pincode: userData.pincode,
-				});
-	
-				toast.success("Profile updated successfully!");
-				setEditMode(false);
-			} catch (error) {
-				toast.error("Failed to update profile.");
-			}
-			setLoading(false);
-		};
-	
-		const handleSendOtp = async () => {
-			// Validate phone number format
-			const phoneRegex = /^[0-9]{10}$/; // Adjust regex as needed for your requirements
-			if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
-				toast.error("Please enter a valid 10-digit phone number");
-				return;
-			}
-			setIsVerifyingPhone(true);
-			try {
-				// Simulate sending OTP
-				const otpSent = true; // Replace with actual OTP sending logic
-				if (otpSent) {
-					toast.info("OTP sent to " + phoneNumber);
-				} else {
-					throw new Error("Failed to send OTP");
-				}
-			} catch (error) {
-				toast.error("Failed to send OTP: " + error.message);
-			}
-			setIsVerifyingPhone(false);
-		};
-	
-		const handleResendOtp = () => {
-			toast.info("OTP resent to " + phoneNumber);
-		};
-	
-		const handleVerifyOtp = async () => {
-			if (!otp) {
-				toast.error("Please enter OTP");
-				return;
-			}
-			setIsVerifyingPhone(true);
-			try {
-				// Simulate OTP verification
-				const otpVerified = true; // Replace with actual OTP verification logic
-				if (otpVerified) {
-					const userRef = doc(db, "users", currentUser.uid);
-					await updateDoc(userRef, {
-						phone: phoneNumber,
-					});
-					toast.success("Phone number verified successfully!");
-					setShowPhonePopup(false);
-					setUserData({ ...userData, phone: phoneNumber });
-				} else {
-					throw new Error("Invalid OTP");
-				}
-			} catch (error) {
-				toast.error("Failed to verify OTP: " + error.message);
-			}
-			setIsVerifyingPhone(false);
-		};
-	
-		const handleChangePassword = async () => {
-			try {
-				await sendPasswordResetEmail(currentUser.auth, userData.email);
-				toast.success("Password reset email has been sent! Check your inbox.");
-			} catch (error) {
-				toast.error("Failed to send reset email.");
-			}
-		};
-	
-		const handleFileChange = async (e) => {
-			if (e.target.files[0]) {
-				setIsUploadingImage(true);
-				const file = e.target.files[0];
-				try {
-					const storageRef = ref(storage, `profile_pics/${currentUser.uid}`);
-					await uploadBytes(storageRef, file);
-					const downloadURL = await getDownloadURL(storageRef);
-	
-					const userRef = doc(db, "users", currentUser.uid);
-					await updateDoc(userRef, {
-						profile_pic: downloadURL,
-					});
-	
-					setUserData({ ...userData, profile_pic: downloadURL });
-					toast.success("Profile picture updated successfully!");
-				} catch (error) {
-					toast.error("Failed to upload profile picture.");
-				}
-				setIsUploadingImage(false);
-			}
-		};
-	
-		const handleLogout = async () => {
-			if (currentUser) {
-				const userRef = doc(db, "login", currentUser.uid);
-	
-				try {
-					// Store logout time in Firestore
-					await setDoc(userRef, {
-						logout_time: serverTimestamp(),
-					});
-	
-					await logout();
-					toast.success("Logged out successfully!");
-				} catch (error) {
-					toast.error("Error logging out: ", error);
-				}
-			}
-		};
+  const { currentUser, logout } = useAuth();
+  const [userData, setUserData] = useState({
+    username: "",
+    email: "",
+    phone: "",
+    DOB: "",
+    state: "",
+    address: "",
+    pincode: "",
+    profile_pic: "",
+  });
+  console.log(currentUser);
+  const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showPhonePopup, setShowPhonePopup] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [otp, setOtp] = useState("");
+  const [isVerifyingPhone, setIsVerifyingPhone] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!currentUser) {
+        setLoading(false);
+        navigate("/sign");
+        return;
+      }
+      try {
+        const userRef = doc(db, "users", currentUser.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          setUserData(userSnap.data());
+        }
+      } catch (error) {
+        toast.error("Failed to load User data.");
+      }
+    };
+    fetchUserData();
+  }, [currentUser]);
+
+  const handleEditProfile = async () => {
+    setEditMode(true);
+  };
+  const handleSubmitProfile = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      let profilePicData = userData.profile_pic;
+      if (selectedImage?.file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(selectedImage.file);
+        reader.onload = async () => {
+          profilePicData = reader.result;
+          await saveProfile(profilePicData);
+        };
+      } else {
+        await saveProfile(profilePicData);
+      }
+    } catch (error) {
+      toast.error("Failed to update profile.");
+      setLoading(false);
+    }
+  };
+
+  const saveProfile = async (profilePicData) => {
+    try {
+      const userRef = doc(db, "users", currentUser.uid);
+      await updateDoc(userRef, {
+        username: userData.username || "",
+        DOB: userData.DOB || "",
+        state: userData.state || "",
+        address: userData.address || "",
+        pincode: userData.pincode || "",
+        profile_pic: profilePicData || "",
+      });
+      toast.success("Profile updated successfully!");
+      setUserData({ ...userData, profile_pic: profilePicData });
+      setSelectedImage(null);
+      setEditMode(false);
+    } catch (error) {
+      toast.error("Failed to update profile.");
+    }
+    setLoading(false);
+  };
+
+  const handleSendOtp = async () => {
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
+      toast.error("Please enter a valid 10-digit phone number");
+      return;
+    }
+    setIsVerifyingPhone(true);
+    try {
+      toast.info("OTP sent to " + phoneNumber);
+    } catch (error) {
+      toast.error("Failed to send OTP: " + error.message);
+    }
+    setIsVerifyingPhone(false);
+  };
+
+  const handleResendOtp = () => {
+    toast.info("OTP resent to " + phoneNumber);
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otp) {
+      toast.error("Please enter OTP");
+      return;
+    }
+    setIsVerifyingPhone(true);
+    try {
+      const otpVerified = true;
+      if (otpVerified) {
+        const userRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userRef, {
+          phone: phoneNumber,
+        });
+        toast.success("Phone number verified successfully!");
+        setUserData({ ...userData, phone: phoneNumber });
+        setShowPhonePopup(false);
+      } else {
+        throw new Error("Invalid OTP");
+      }
+    } catch (error) {
+      toast.error("Failed to verify OTP: " + error.message);
+    }
+    setIsVerifyingPhone(false);
+  };
+
+  const handleChangePassword = async () => {
+    try {
+      await sendPasswordResetEmail(currentUser.auth, userData.email);
+      toast.success("Password reset email has been sent! Check your inbox.");
+    } catch (error) {
+      toast.error("Failed to send reset email.");
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage({
+          file: file,
+          preview: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleLogout = async () => {
+    if (currentUser) {
+      const userRef = doc(db, "login", currentUser.uid);
+      try {
+        await setDoc(userRef, { logout_time: serverTimestamp() });
+        await logout();
+        toast.success("Logged out successfully!");
+      } catch (error) {
+        toast.error("Error logging out: ", error);
+      }
+    }
+  };
   return (
     <div className="adminprofile">
       <Adminnavbar />
@@ -188,34 +190,46 @@ const Adminprofile = () => {
         <div className="profile-details">
           <div className="section manage">
             <div className="profile-img">
-              {isUploadingImage ? (
-                <div className="loading">Uploading...</div>
-              ) : userData?.profile_pic ? (
+              {selectedImage?.preview || userData.profile_pic ? (
                 <>
-                  <img src={userData.profile_pic} alt="User" />
-                  <label className="change-photo">
-                    <i className="fa-solid fa-camera"></i>
-                    <input
-                      type="file"
-                      onChange={handleFileChange}
-                      hidden
-                      accept="image/*"
-                      disabled={!editMode}
-                    />
-                  </label>
+                  <img
+                    src={selectedImage?.preview || userData.profile_pic}
+                    alt="User"
+                  />
+                  {editMode ? (
+                    <label className="change-photo" disabled={!editMode}>
+                      <span>+ New</span>
+                      <input
+                        type="file"
+                        onChange={handleFileChange}
+                        hidden
+                        accept="image/*"
+                        disabled={!editMode}
+                      />
+                    </label>
+                  ) : null}
                 </>
               ) : (
-                <label className="default">
-                  <i className="fa-solid fa-camera"></i>
-                  <span>+ Add</span>
-                  <input
-                    type="file"
-                    onChange={handleFileChange}
-                    hidden
-                    accept="image/*"
-                    disabled={!editMode}
-                  />
-                </label>
+                <>
+                  {selectedImage?.preview ? (
+                    <img src={selectedImage?.preview} alt="User" />
+                  ) : (
+                    <img src={user} alt="User" />
+                  )}
+                  {editMode ? (
+                    <label className="default">
+                      <i className="fa-solid fa-camera"></i>
+                      <span>+ Add</span>
+                      <input
+                        type="file"
+                        onChange={handleFileChange}
+                        hidden
+                        accept="image/*"
+                        disabled={!editMode}
+                      />
+                    </label>
+                  ) : null}
+                </>
               )}
             </div>
             <h3>Hi, {userData.username || "Guest"}</h3>
@@ -253,14 +267,11 @@ const Adminprofile = () => {
                   Account Details:<span className="mandatory">*</span>
                 </h3>
               </span>
-              <div className="main-data">
+              <div className="main-data email">
                 <label>
                   Email:<span className="mandatory">*</span>
                 </label>
                 <input type="text" value={userData.email} disabled />
-                <button type="button" className="change">
-                  {userData?.email?.length > 0 ? "Change" : "Add"}
-                </button>
               </div>
               <div className="main-data">
                 <label>

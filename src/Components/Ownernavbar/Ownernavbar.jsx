@@ -80,7 +80,11 @@ const Ownernavbar = () => {
               {currentUser ? (
                 <div className="user-info">
                   <span className="user">
-                    <img src={user} alt="user" />
+                    {userData?.profile_pic ? (
+                      <img src={userData?.profile_pic} alt="user" />
+                    ) : (
+                      <img src={user} alt="user" />
+                    )}
                     Hi, {userData?.username || "Guest"}
                   </span>
                   <div className="on-hover">
@@ -88,9 +92,11 @@ const Ownernavbar = () => {
                       My Profile
                     </Link>
                     <hr />
-                    <button onClick={handleLogout} className="btn logout-btn">
-                      Log Out
-                    </button>
+                    <Link to="/">
+                      <button onClick={handleLogout} className="btn logout-btn">
+                        Log Out
+                      </button>
+                    </Link>
                   </div>
                 </div>
               ) : (
