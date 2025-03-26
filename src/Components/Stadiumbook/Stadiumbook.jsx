@@ -7,7 +7,6 @@ import { db } from "../../firebase";
 import { getDoc, doc, collection, getDocs } from "firebase/firestore";
 import "./Stadiumbook.css";
 import Stadiumrgics from "../Stadiumrgics/Stadiumrgics";
-// import other stadiums here if needed
 
 const Stadiumbook = () => {
   const { eventId } = useParams();

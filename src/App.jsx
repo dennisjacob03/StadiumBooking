@@ -28,6 +28,7 @@ import Ownercategory from "./Components/Ownercategory/Ownercategory";
 import Admincategory from "./Components/Admincategory/Admincategory";
 import Stadiumrgics from "./Components/Stadiumrgics/Stadiumrgics"
 import Seatbook from "./Components/Seatbook/Seatbook";
+import PhoneVerification from "./Components/PhoneVerification/PhoneVerification";
 
 const App = () => {
   return (
@@ -61,6 +62,7 @@ const App = () => {
           <Route path="/admincategory" element={<Admincategory />} />
           <Route path="/stadiumrgics" element={<Stadiumrgics />} />
           <Route path="/seatbook" element={<Seatbook />} />
+          <Route path="/phoneverification" element={<PhoneVerification />} />
         </Routes>
       </AuthProvider>
     </Router>

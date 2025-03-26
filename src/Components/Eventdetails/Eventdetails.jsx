@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";import { toast } from "react-toastify";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { db } from "../../firebase";
 import { getDoc, doc, collection, getDocs } from "firebase/firestore";

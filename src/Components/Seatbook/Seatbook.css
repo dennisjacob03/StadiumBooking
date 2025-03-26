@@ -21,7 +21,43 @@
     outline: 0;
     font-weight: bold;
   }
-	
+	.seatbook-container {
+  padding: 20px;
+}
+.category-section {
+  margin-bottom: 30px;
+}
+.block {
+  margin-bottom: 20px;
+}
+.row {
+  margin: 5px 0;
+}
+.seats {
+  display: flex;
+  flex-wrap: wrap;
+}
+.seat {
+  width: 40px;
+  height: 40px;
+  margin: 3px;
+  border: none;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 4px;
+}
+.seat.unavailable {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.seat.selected {
+  background-color: #f39c12;
+}
+.selected-seats {
+  margin-top: 20px;
+}
+
   .stadiumbook a {
     text-decoration: none;
     color: inherit;

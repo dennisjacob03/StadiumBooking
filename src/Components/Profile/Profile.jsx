@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "react-phone-number-input/style.css";
-import PhoneInput from "react-phone-number-input";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { db } from "../../firebase";
@@ -17,6 +15,7 @@ import "./Profile.css";
 import { Link, useNavigate } from "react-router-dom";
 import { sendPasswordResetEmail } from "firebase/auth";
 import user from "../../assets/user-default.png";
+import PhoneVerification from "../PhoneVerification/PhoneVerification";
 
 const Profile = () => {
   const { currentUser, logout } = useAuth();
@@ -34,10 +33,6 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [showPhonePopup, setShowPhonePopup] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [otp, setOtp] = useState("");
-  const [isVerifyingPhone, setIsVerifyingPhone] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     const fetchUserData = async () => {
@@ -104,47 +99,6 @@ const Profile = () => {
     }
     setLoading(false);
   };
-  const handleSendOtp = async () => {
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
-      toast.error("Please enter a valid 10-digit phone number");
-      return;
-    }
-    setIsVerifyingPhone(true);
-    try {
-      toast.info("OTP sent to " + phoneNumber);
-    } catch (error) {
-      toast.error("Failed to send OTP: " + error.message);
-    }
-    setIsVerifyingPhone(false);
-  };
-
-  const handleResendOtp = () => {
-    toast.info("OTP resent to " + phoneNumber);
-  };
-
-  const handleVerifyOtp = async () => {
-    if (!otp) {
-      toast.error("Please enter OTP");
-      return;
-    }
-    setIsVerifyingPhone(true);
-    try {
-      const otpVerified = true;
-      if (otpVerified) {
-        const userRef = doc(db, "users", currentUser.uid);
-        await updateDoc(userRef, { phone: phoneNumber });
-        toast.success("Phone number verified successfully!");
-        setUserData({ ...userData, phone: phoneNumber });
-        setShowPhonePopup(false);
-      } else {
-        throw new Error("Invalid OTP");
-      }
-    } catch (error) {
-      toast.error("Failed to verify OTP: " + error.message);
-    }
-    setIsVerifyingPhone(false);
-  };
 
   const handleChangePassword = async () => {
     try {
@@ -180,6 +134,9 @@ const Profile = () => {
         toast.error("Error logging out: ", error);
       }
     }
+  };
+	const handlePhoneVerification = () => {
+    navigate("/phoneverification");
   };
   return (
     <div className="profile container">
@@ -287,7 +244,7 @@ const Profile = () => {
                 <button
                   type="button"
                   className="change"
-                  onClick={() => setShowPhonePopup(true)}
+                  onClick={handlePhoneVerification}
                 >
                   {userData?.phone?.length > 0 ? "Change" : "Add"}
                 </button>
@@ -379,75 +336,6 @@ const Profile = () => {
           </div>
         </div>
       </div>
-      {showPhonePopup && (
-        <div className="popup-overlay">
-          <div className="popup-box">
-            <div className="cancle">
-              <div
-                className="cancle-btn"
-                onClick={() => setShowPhonePopup(false)}
-              >
-                <svg
-                  onClick={() => setShowPhonePopup(false)}
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="30"
-                  height="30"
-                  viewBox="3 3 18 18"
-                  fill="none"
-                  stroke="black"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <circle cx="12" cy="12" r="8" stroke="black" fill="white" />
-                  <line x1="15" y1="9" x2="9" y2="15" />
-                  <line
-                    onClick={() => setShowPhonePopup(false)}
-                    x1="9"
-                    y1="9"
-                    x2="15"
-                    y2="15"
-                  />
-                </svg>
-              </div>
-            </div>
-
-            <h3>Enter Phone Number</h3>
-            <div className="popup-content">
-              <div className="pop-input">
-                <input
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="Enter phone number"
-                  pattern="[0-9]{10}"
-                />
-              </div>
-              <div className="pop-btn">
-                <button onClick={handleSendOtp} disabled={isVerifyingPhone}>
-                  {isVerifyingPhone ? "Sending..." : "Send OTP"}
-                </button>
-                <button onClick={handleResendOtp} disabled={isVerifyingPhone}>
-                  Resend OTP
-                </button>
-              </div>
-              <div className="pop-input">
-                <input
-                  type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  placeholder="Enter OTP"
-                />
-              </div>
-              <div className="pop-btn">
-                <button onClick={handleVerifyOtp} disabled={isVerifyingPhone}>
-                  {isVerifyingPhone ? "Verifying..." : "Verify OTP"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
       <Footer></Footer>
     </div>
   );
