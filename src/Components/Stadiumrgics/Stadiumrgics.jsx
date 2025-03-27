@@ -6,7 +6,42 @@ import { getDoc, doc, collection, getDocs } from "firebase/firestore";
 import { Link } from "react-router-dom";
 
 import "./Stadiumrgics.css";
-const Stadiumrgics = () => {
+const Stadiumrgics = ({ eventId }) => {
+  const [event, setEvent] = useState(null);
+  const [stadiums, setStadiums] = useState({});
+	const [category, setCategory] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStadiumData = async () => {
+      try {
+        const eventDoc = await getDoc(doc(db, "events", eventId));
+        if (eventDoc.exists()) {
+          setEvent(eventDoc.data());
+        } else {
+          toast.error("Event not found");
+          setLoading(false);
+          return;
+        }
+
+        const stadiumsRef = collection(db, "stadiums");
+        const snapshot = await getDocs(stadiumsRef);
+        const stadiumData = {};
+        snapshot.docs.forEach((doc) => {
+          stadiumData[doc.id] = doc.data().stadium_name;
+        });
+        setStadiums(stadiumData);
+        setLoading(false);
+      } catch (error) {
+        toast.error("Error fetching data");
+        setLoading(false);
+      }
+    };
+
+    fetchStadiumData();
+  }, [eventId]);
+
+
   return (
     <div className="layout-full">
       <svg viewBox="0 0 1080 1080" id="Main" xmlns="http://www.w3.org/2000/svg">
@@ -1492,7 +1527,7 @@ const Stadiumrgics = () => {
             ></path>
           </g>
         </g>
-        <Link to="/seatbook">
+        <Link to={`/seatbook/${eventId}/Arun Icecreams East Stand First Floor`}>
           <g
             className="section-seatmap"
             data-id="Arun Icecreams East Stand First Floor"

@@ -1,5 +1,6 @@
 .seatbook{
-	
+  text-align: center;
+  min-height: 100vh;
   background-color: #ffffff;
   a {
     text-decoration: none;
@@ -21,49 +22,92 @@
     outline: 0;
     font-weight: bold;
   }
+  nav {
+    background: #22925a;
+  }
 	.seatbook-container {
   padding: 20px;
+		height: 100vh;
+		width: 100%;
+		margin-top: 100px;
+
+h2 {
+  color: #333;
+  margin-bottom: 15px;
 }
-.category-section {
-  margin-bottom: 30px;
-}
-.block {
-  margin-bottom: 20px;
-}
-.row {
-  margin: 5px 0;
-}
-.seats {
+
+/* Seat Layout */
+.seat-layout {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  padding: 20px;
 }
+
+.seat-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* Seat Styling */
 .seat {
   width: 40px;
   height: 40px;
-  margin: 3px;
-  border: none;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
   cursor: pointer;
-  background-color: #4caf50;
-  color: white;
-  border-radius: 4px;
+  transition: transform 0.2s, background-color 0.2s;
 }
-.seat.unavailable {
-  background-color: #ccc;
+
+/* Seat Colors */
+.available {
+  background-color: #4caf50; /* Green */
+  color: white;
+}
+
+.available:hover {
+  background-color: #45a049;
+  transform: scale(1.1);
+}
+
+.selected {
+  background-color: #ff9800; /* Orange */
+  color: white;
+}
+
+.booked {
+  background-color: #d32f2f; /* Red */
+  color: white;
   cursor: not-allowed;
 }
-.seat.selected {
-  background-color: #f39c12;
-}
-.selected-seats {
+
+/* Summary Section */
+.seat-summary {
   margin-top: 20px;
+  font-size: 16px;
 }
 
-  .stadiumbook a {
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
+.seat-summary p {
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+@media (max-width: 600px) {
+  .seat-row {
+    gap: 6px;
   }
 
+  .seat {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+}
   .container {
     padding: 0px 4%;
   }
@@ -72,8 +116,5 @@
     background: #22925a;
   }
 
-	.seatbook-container{
-		height: 100vh;
-		width: 100%;
-	}
+}
 }

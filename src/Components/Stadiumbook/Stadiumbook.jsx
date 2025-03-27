@@ -52,8 +52,13 @@ const Stadiumbook = () => {
 
     switch (stadiumName) {
       case "Rajiv Gandhi International Cricket Stadium":
-        return <Stadiumrgics />;
-      // Add more cases for other stadium names and components
+        return <Stadiumrgics eventId={eventId} />;
+      // case "Wankhede stadium":
+      //   return <Stadiumrgics eventId={eventId} />;
+      // case "Rajiv Gandhi International Cricket Stadium":
+      //   return <Stadiumrgics eventId={eventId} />;
+      // case "Greenfield International Stadium":
+      //   return <Stadiumrgics eventId={eventId} />;
       default:
         return <p>Stadium layout not available for this stadium.</p>;
     }
