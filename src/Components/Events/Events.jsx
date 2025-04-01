@@ -21,7 +21,7 @@ const Events = () => {
     const fetchEventsAndStadiums = async () => {
       try {
         // Fetch events
-        const eventsRef = collection(db, "events");
+        const eventsRef = query(collection(db, "events"), where("status", "==", 1));
         const eventsSnapshot = await getDocs(eventsRef);
         const eventList = eventsSnapshot.docs.map((doc) => ({
           id: doc.id,

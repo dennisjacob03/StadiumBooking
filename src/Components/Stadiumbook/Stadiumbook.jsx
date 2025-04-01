@@ -30,7 +30,10 @@ const Stadiumbook = () => {
         const snapshot = await getDocs(stadiumsRef);
         const stadiumData = {};
         snapshot.docs.forEach((doc) => {
-          stadiumData[doc.id] = doc.data().stadium_name;
+          stadiumData[doc.id] = {
+            name: doc.data().stadium_name,
+            location: doc.data().location || "Unknown location",
+          };
         });
         setStadiums(stadiumData);
         setLoading(false);
@@ -48,7 +51,7 @@ const Stadiumbook = () => {
       return <p>Stadium layout not found.</p>;
     }
 
-    const stadiumName = stadiums[event.stadium_id];
+    const stadiumName = stadiums[event.stadium_id]?.name;
 
     switch (stadiumName) {
       case "Rajiv Gandhi International Cricket Stadium":
@@ -69,7 +72,21 @@ const Stadiumbook = () => {
       <Navbar />
       <div className="layout">
         <div className="mainhead">
-          <h2 className="stadium-title">Stadium Seating Layout</h2>
+          {event ? (
+            <>
+              <h2 className="stadium-title">
+                {event.event_name} -{" "}
+                {new Date(event.date_time).toLocaleString()} - {event.team1} vs{" "}
+                {event.team2}
+              </h2>
+              <p>
+                {stadiums[event.stadium_id]?.name},{" "}
+                {stadiums[event.stadium_id]?.location}
+              </p>
+            </>
+          ) : (
+            <p>Loading event details...</p>
+          )}
         </div>
         <div className="stadium-layout container">
           {loading ? <p>Loading stadium layout...</p> : renderStadiumLayout()}

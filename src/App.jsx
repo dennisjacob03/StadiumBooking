@@ -61,7 +61,7 @@ const App = () => {
           <Route path="/ownercategory" element={<Ownercategory />} />
           <Route path="/admincategory" element={<Admincategory />} />
           <Route path="/stadiumrgics" element={<Stadiumrgics />} />
-          <Route path="/seatbook/:eventId/:categoryName" element={<Seatbook />} />
+          <Route path="/seatbook/:eventId/:categoryId" element={<Seatbook />} />
           <Route path="/phoneverification" element={<PhoneVerification />} />
         </Routes>
       </AuthProvider>

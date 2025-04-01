@@ -6,10 +6,11 @@ import { getDoc, doc, collection, getDocs } from "firebase/firestore";
 import { Link } from "react-router-dom";
 
 import "./Stadiumrgics.css";
+
 const Stadiumrgics = ({ eventId }) => {
   const [event, setEvent] = useState(null);
   const [stadiums, setStadiums] = useState({});
-	const [category, setCategory] = useState({});
+  const [categories, setCategories] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,9 +39,25 @@ const Stadiumrgics = ({ eventId }) => {
       }
     };
 
+		const fetchCategoryData = async () => {
+			try {
+				const categoryRef = collection(db, "stadium_categories");
+				const snapshot = await getDocs(categoryRef);
+				
+        const categoryData = {};
+        snapshot.docs.forEach((doc) => {
+          categoryData[doc.data().category_name] = doc.id;
+        });
+        setCategories(categoryData);
+			} catch (error) {
+				toast.error("Error fetching category data", error);
+        console.error("Firestore Error:", error);
+			}
+		};
+		
     fetchStadiumData();
+		fetchCategoryData();
   }, [eventId]);
-
 
   return (
     <div className="layout-full">
@@ -1527,7 +1544,7 @@ const Stadiumrgics = ({ eventId }) => {
             ></path>
           </g>
         </g>
-        <Link to={`/seatbook/${eventId}/Arun Icecreams East Stand First Floor`}>
+        <Link to={`/seatbook/${eventId}/${categories["Arun Icecreams East Stand First Floor"]}`}>
           <g
             className="section-seatmap"
             data-id="Arun Icecreams East Stand First Floor"
