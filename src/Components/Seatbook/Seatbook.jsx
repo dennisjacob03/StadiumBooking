@@ -52,26 +52,14 @@ const Seatbook = () => {
           };
         });
         setStadiums(stadiumData);
-        setLoading(false);
       } catch (error) {
         toast.error("Error fetching event/stadium data");
         console.error(error);
       } finally {
         setLoading(false);
       }
-    };
-    const loadSeatData = async () => {
-      // Inside loadSeatData
-      try {
-        const response = await fetch("/EF.json");
-        const data = await response.json();
-        setSeatData(data.sections);
-      } catch (error) {
-        console.error("Error loading seat data:", error);
-        toast.error("Error loading seat data");
-      }
-    };
 
+    };
     const fetchCategoryData = async () => {
       if (!categoryId) {
         toast.error("Category ID is missing");
@@ -150,10 +138,63 @@ const Seatbook = () => {
     };
 
     fetchData();
-    loadSeatData();
     fetchCategoryData();
     fetchBookedSeats();
   }, [eventId, categoryId, currentUser]);
+
+
+useEffect(() => {
+  if (event && category && event.stadium_id && stadiums[event.stadium_id]) {
+    const getSeatLayoutFileName = (stadiumName, categoryName) => {
+      const normalize = (str) =>
+        str
+          .toLowerCase()
+          .replace(/\s+/g, "")
+          .replace(/[^a-z]/gi, "");
+      if (normalize(stadiumName) === "rajivgandhiinternationalcricketstadium") {
+        if (
+          categoryName.toLowerCase().includes("east") &&
+          categoryName.toLowerCase().includes("first")
+        ) {
+          return "EF.json";
+        } else if (
+          categoryName.toLowerCase().includes("west") &&
+          categoryName.toLowerCase().includes("first")
+        ) {
+          return "WF.json";
+        } else if (
+          categoryName.toLowerCase().includes("east") &&
+          categoryName.toLowerCase().includes("ground")
+        ) {
+          return "EG.json";
+        } else if (
+          categoryName.toLowerCase().includes("west") &&
+          categoryName.toLowerCase().includes("ground")
+        ) {
+          return "WG.json";
+        }
+      }
+      return "default.json";
+    };
+
+    const loadSeatData = async () => {
+      try {
+        const stadiumName = stadiums[event.stadium_id]?.name || "";
+        const fileName = getSeatLayoutFileName(stadiumName, category);
+
+        const response = await fetch(`/${fileName}`);
+        if (!response.ok) throw new Error("Seat layout not found");
+        const data = await response.json();
+        setSeatData(data.sections);
+      } catch (error) {
+        console.error("Error loading seat data:", error);
+        toast.error("Error loading seat data");
+      }
+    };
+
+    loadSeatData();
+  }
+}, [event, category, stadiums]);
 
   const toggleSeatSelection = (sectionId, row, seatNumber) => {
     const seatId = `${sectionId}-${row}-${seatNumber}`;
@@ -250,6 +291,10 @@ const Seatbook = () => {
           // Existing booking found, update it
           const existingBookingDoc = userBookingSnapshots.docs[0];
           const existingBookingRef = doc(db, "bookings", existingBookingDoc.id);
+if (selectedSeats.length === 0) {
+  toast.error("Please select at least one seat.");
+  return;
+}
 
           await updateDoc(existingBookingRef, {
             seats: selectedSeats, // Update seats

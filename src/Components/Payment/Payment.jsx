@@ -60,27 +60,37 @@ const [timeLeft, setTimeLeft] = useState("");
         const expiry = new Date(bookingTime.getTime() + 10 * 60000);
         setExpiryTime(expiry);
 
-        const interval = setInterval(() => {
-          const now = new Date();
-          const diff = expiry - now;
+                let interval;
+                let hasExpired = false;
 
-          if (diff <= 0) {
-            clearInterval(interval);
-            setTimeLeft("00:00");
-            toast.error("Booking expired due to timeout!");
-            navigate("/");
-          } else {
-            const minutes = String(Math.floor(diff / 60000)).padStart(2, "0");
-            const seconds = String(Math.floor((diff % 60000) / 1000)).padStart(
-              2,
-              "0"
-            );
-            setTimeLeft(`${minutes}:${seconds}`);
-          }
-        }, 1000);
+                const startTimer = () => {
+                  interval = setInterval(() => {
+                    const now = new Date();
+                    const diff = expiry - now;
 
-        // Cleanup
-        return () => clearInterval(interval);
+                    if (diff <= 0 && !hasExpired) {
+                      hasExpired = true; // prevent duplicate toast + navigation
+                      clearInterval(interval);
+                      setTimeLeft("00:00");
+                      toast.error("Booking expired due to timeout!");
+                      navigate("/");
+                    } else if (diff > 0) {
+                      const minutes = String(Math.floor(diff / 60000)).padStart(
+                        2,
+                        "0"
+                      );
+                      const seconds = String(
+                        Math.floor((diff % 60000) / 1000)
+                      ).padStart(2, "0");
+                      setTimeLeft(`${minutes}:${seconds}`);
+                    }
+                  }, 1000);
+                };
+
+                startTimer();
+
+                return () => clearInterval(interval);
+
       } catch (error) {
         toast.error("Error fetching booking details");
         console.error(error);
@@ -220,8 +230,18 @@ const [timeLeft, setTimeLeft] = useState("");
             payment: "Completed",
           });
 
+          // Create a ticket document for each paid seat
+          const seatList = bookingDetails?.seats || [];
+          for (let seat of seatList) {
+            await addDoc(collection(db, "tickets"), {
+              seat: seat,
+              paymentId: response.razorpay_payment_id,
+            });
+          }
           toast.success("Payment successful!");
-          navigate(`/seatbook/${bookingDetails.categoryId}`); // Redirect to confirmation page
+          navigate(
+            `/seatbook/${bookingDetails.eventId}/${bookingDetails.categoryId}`
+          );
         } catch (error) {
           toast.error("Failed to store payment details");
           console.error("Error storing payment details:", error);
