@@ -24,9 +24,10 @@ const Profile = () => {
     email: "",
     phone: "",
     DOB: "",
-    state: "",
-    address: "",
     pincode: "",
+    address: "",
+		city: "",
+    state: "",
     profile_pic: "",
   });
 
@@ -54,6 +55,40 @@ const Profile = () => {
     fetchUserData();
   }, [currentUser, navigate]);
 
+  const validateInput = (text) => {
+    return text.trim().length > 0;
+  };
+  const fetchCityAndState = async (pincode) => {
+    if (pincode.length !== 6) return;
+    try {
+      const response = await fetch(
+        `https://api.postalpincode.in/pincode/${pincode}`
+      );
+      const data = await response.json();
+      if (data[0].Status === "Success") {
+        const { District, State } = data[0].PostOffice[0];
+        setUserData((prevData) => ({
+          ...prevData,
+          city: District,
+          state: State,
+        }));
+      } else {
+        toast.error("Invalid Pincode");
+        setUserData((prevData) => ({ ...prevData, city: "", state: "" }));
+      }
+    } catch (error) {
+      toast.error("Failed to fetch city and state");
+    }
+  };
+
+  const handlePincodeChange = (e) => {
+    const pincode = e.target.value;
+    setUserData({ ...userData, pincode });
+    if (pincode.length === 6) {
+      fetchCityAndState(pincode);
+    }
+  };
+
   const handleEditProfile = async () => {
     setEditMode(true);
   };
@@ -61,6 +96,16 @@ const Profile = () => {
     e.preventDefault();
     setLoading(true);
 
+		if(!validateInput(userData.username)) {
+      toast.error("Full name cannot be empty or only spaces.");
+      setLoading(false);
+      return;
+    }
+		else if (!validateInput(userData.address)) {
+			toast.error("Address cannot be empty or only spaces.");
+			setLoading(false);
+			return;
+		}
     try {
       let profilePicData = userData.profile_pic;
       if (selectedImage?.file) {
@@ -85,6 +130,7 @@ const Profile = () => {
       await updateDoc(userRef, {
         username: userData.username ||"",
         DOB: userData.DOB || "",
+				city: userData.city || "",
         state: userData.state || "",
         address: userData.address||	"",
         pincode: userData.pincode || "",
@@ -95,7 +141,7 @@ const Profile = () => {
       setSelectedImage(null);
       setEditMode(false);
     } catch (error) {
-      toast.error("Failed to update profile. hello");
+      toast.error("Failed to update profile.");
     }
     setLoading(false);
   };
@@ -195,7 +241,7 @@ const Profile = () => {
               {!editMode ? (
                 <button
                   type="button"
-                  className="btn"
+                  className="btn edit"
                   onClick={handleEditProfile}
                 >
                   Edit Profile
@@ -203,18 +249,20 @@ const Profile = () => {
               ) : (
                 <button
                   type="submit"
-                  className="btn"
+                  className="btn save"
                   onClick={handleSubmitProfile}
-                  disabled={loading}
+                  disabled={
+                    loading ||
+                    userData.username === "" ||
+                    userData.pincode === "" ||
+                    userData.address === "" ||
+                    userData.city === "" ||
+                    userData.state === ""
+                  }
                 >
                   {loading ? "Saving..." : "Save Changes"}
                 </button>
               )}
-              <Link to="/">
-                <button type="button" className="btn" onClick={handleLogout}>
-                  Log Out
-                </button>
-              </Link>
             </div>
           </div>
           <hr />
@@ -237,7 +285,7 @@ const Profile = () => {
                 </label>
                 <input
                   type="text"
-                  value={userData.phone || ""}
+                  value={userData.phoneNumber || ""}
                   required
                   disabled
                 />
@@ -281,18 +329,22 @@ const Profile = () => {
                 />
               </div>
               <div className="data">
-                <label>State:</label>
+                <label>
+                  Pincode:
+                  <span className="mandatory">*</span>
+                </label>
                 <input
                   type="text"
-                  value={userData.state || ""}
-                  onChange={(e) =>
-                    setUserData({ ...userData, state: e.target.value })
-                  }
+                  value={userData.pincode || ""}
+                  onChange={handlePincodeChange}
                   disabled={!editMode}
                 />
               </div>
               <div className="data">
-                <label>Address:</label>
+                <label>
+                  Address:
+                  <span className="mandatory">*</span>
+                </label>
                 <input
                   type="text"
                   value={userData.address || ""}
@@ -303,23 +355,50 @@ const Profile = () => {
                 />
               </div>
               <div className="data">
-                <label>Pincode:</label>
+                <label>
+                  City:
+                  <span className="mandatory">*</span>
+                </label>
                 <input
                   type="text"
-                  value={userData.pincode || ""}
+                  value={userData.city || ""}
                   onChange={(e) =>
-                    setUserData({ ...userData, pincode: e.target.value })
+                    setUserData({ ...userData, city: e.target.value })
                   }
-                  disabled={!editMode}
+                  disabled
+									className="auto-fill"
                 />
               </div>
+              <div className="data">
+                <label>
+                  State:
+                  <span className="mandatory">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={userData.state || ""}
+                  onChange={(e) =>
+                    setUserData({ ...userData, state: e.target.value })
+                  }
+                  disabled
+									className="auto-fill"
+                />
+              </div>
+
               {editMode && (
                 <div className="save">
                   <button
                     type="submit"
                     className="saving"
                     onClick={handleSubmitProfile}
-                    disabled={loading}
+                    disabled={
+                      loading ||
+                      userData.username === "" ||
+                      userData.pincode === "" ||
+                      userData.address === "" ||
+                      userData.city === "" ||
+                      userData.state === ""
+                    }
                   >
                     {loading ? "Saving..." : "SAVE CHANGES"}
                   </button>

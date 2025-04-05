@@ -13,7 +13,7 @@ const Footer = () => {
               <img src={logo} alt="SpotOn" className="logo" />
             </a>
           </div>
-          <p>© 2025 SpotOn. All Rights Reserved.</p>
+          {/* <p>© 2025 SpotOn. All Rights Reserved.</p> */}
           <div className="follow">
             <ul>
               <li>
@@ -44,11 +44,11 @@ const Footer = () => {
           <ul>
             <li>
               <i className="fa-solid fa-envelope"></i>
-              <span>info@spoton.in</span>
+              <span>spoton.booking.info@gmail.com</span>
             </li>
             <li>
               <i className="fa-solid fa-phone"></i>
-              <span>+91XXXXXXXXXX</span>
+              <span>+91 9747012188</span>
             </li>
             <li>
               <i className="fa-solid fa-location-dot"></i>

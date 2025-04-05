@@ -53,6 +53,11 @@
         color: #222;
       }
     }
+.expiry-time {
+  color: #e74c3c;
+  font-weight: bold;
+  margin-top: 10px;
+}
 
     .category_name {
       font-size: 20px;
@@ -157,9 +162,10 @@
       gap: 8px;
       justify-content: center;
     }
-    .seat.unavailable {
-      background-color: #ccc;
+    .seat.booked {
+      background-color: #9c9c9c;
       cursor: not-allowed;
+			border: none;
     }
 
     .seat.available:hover {

@@ -92,9 +92,9 @@ const AdminDash = () => {
             </Link>
           </div>
           <div className="main 3">
-            <h1>Bookings</h1>
-            <p>Manage Bookings</p>
-            <Link to="/Bookings" className="btn">
+            <h1>Category</h1>
+            <p>Manage Category</p>
+            <Link to="/admincategory" className="btn">
               View
             </Link>
           </div>

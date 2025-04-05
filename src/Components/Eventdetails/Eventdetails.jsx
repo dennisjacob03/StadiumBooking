@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { db } from "../../firebase";
-import { getDoc, doc, collection, getDocs } from "firebase/firestore";
+import {
+  getDoc,
+  doc,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import { Link } from "react-router-dom";
@@ -13,18 +20,21 @@ const Eventdetails = () => {
   const [event, setEvent] = useState(null);
   const [stadiums, setStadiums] = useState({});
   const [loading, setLoading] = useState(true);
+  const [lowestPrice, setLowestPrice] = useState(null);
 
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
         const eventDoc = await getDoc(doc(db, "events", eventId));
         if (eventDoc.exists()) {
-          setEvent(eventDoc.data());
+          const eventData = eventDoc.data();
+          setEvent(eventData);
         } else {
           toast.error("Event not found");
         }
       } catch (error) {
-        toast.error("Error fetching event details:", error);
+        toast.error("Error fetching event details");
+        console.error("Error fetching event details:", error);
       }
     };
 
@@ -38,7 +48,9 @@ const Eventdetails = () => {
         });
         setStadiums(stadiumData);
       } catch (error) {
-        toast.error("Error fetching stadiums:", error);
+        toast.error("Error fetching stadiums");
+				console.error("Error fetching stadiums:", error);
+
       }
     };
 
@@ -47,6 +59,32 @@ const Eventdetails = () => {
     );
   }, [eventId]);
 
+  useEffect(() => {
+    if (event?.stadium_id) {
+      const fetchCategories = async () => {
+        try {
+          const categoriesRef = collection(db, "stadium_categories");
+          const q = query(
+            categoriesRef,
+            where("stadium_id", "==", event.stadium_id)
+          );
+          const snapshot = await getDocs(q);
+          const prices = snapshot.docs.map((doc) => doc.data().base_price);
+
+          if (prices.length > 0) {
+            setLowestPrice(Math.min(...prices));
+          } else {
+            setLowestPrice(null);
+          }
+        } catch (error) {
+          toast.error("Error fetching categories.");
+          console.error("Error fetching categories:", error);
+        }
+      };
+
+      fetchCategories();
+    }
+  }, [event]); 
   function handleBook() {
     console.log("Booking process started...");
   }
@@ -84,11 +122,11 @@ const Eventdetails = () => {
                 <hr />
                 <div className="main">
                   <div className="price">
-                    <p>Price: ₹{event.base_price}</p>
+                    <p>Price: ₹{lowestPrice !== null ? lowestPrice : "N/A"}</p>
                   </div>
                   <Link to={`/stadiumbook/${eventId}`}>
                     <button onClick={handleBook} className="btn book-btn">
-                      BOOK NOW
+                      BOOK TICKETS
                     </button>
                   </Link>
                 </div>

@@ -1,81 +1,78 @@
-import React, {useRef, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { auth } from "../../firebase";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import "./PhoneVerification.css";
 import { useNavigate } from "react-router-dom";
+import { auth, db } from "../../firebase";
+import { doc, updateDoc } from "firebase/firestore";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
+import "./PhoneVerification.css";
 
 const PhoneVerification = () => {
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [user, setUser] = useState(null);
-	const recaptchaVerifierRef=useRef(null);
-
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [valid, setValid] = useState(true);
+  const [formattedNumber, setFormattedNumber] = useState("");
   const navigate = useNavigate();
+  const user = auth.currentUser;
 
-  useEffect(() => {
+  // Function to validate phone number properly
+  const validatePhoneNumber = (number) => {
+    if (!number) return false;
 
-		console.log("auth object: ", auth);
-    if (!recaptchaVerifierRef.current) {
-      recaptchaVerifierRef.current = new RecaptchaVerifier(auth,
-        "recaptcha-container",
-        {
-          size: "normal",
-          callback: () => 
-            console.log("reCAPTCHA solved"),
-          "expired-callback": () =>
-            toast.info("reCAPTCHA expired, please try again."),
-          }
-      );
-      recaptchaVerifierRef.current.render();
+    const parsedNumber = parsePhoneNumberFromString(number);
+    return parsedNumber && parsedNumber.isValid();
+  };
+
+  // Handle phone input change
+  const handleChange = (value, country) => {
+    const internationalNumber = `+${value}`; // Ensure it has a `+` prefix
+    setPhoneNumber(value);
+
+    const parsedNumber = parsePhoneNumberFromString(
+      internationalNumber,
+      country?.countryCode
+    );
+
+    if (parsedNumber && parsedNumber.isValid()) {
+      setValid(true);
+      setFormattedNumber(parsedNumber.formatInternational()); // Store formatted number
+    } else {
+      setValid(false);
+      setFormattedNumber("");
     }
-  }, []);
+  };
 
-  const sendOtp = async () => {
-    if (phone.length !== 10) {
-      toast.error("Enter a valid 10-digit phone number");
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!valid) {
+      toast.error("Invalid phone number. Please enter a valid mobile number.");
+      return;
+    }
+
+    if (!user) {
+      toast.error("User not authenticated. Please log in again.");
       return;
     }
 
     try {
-      const fullPhoneNumber = `+91${phone}`; // Add country code if needed
-      const confirmation = await signInWithPhoneNumber(
-        auth,
-        fullPhoneNumber,
-        recaptchaVerifierRef.current
-      );
-      toast.success("OTP sent successfully!");
-      setUser(confirmation);
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to send OTP: " + err.message);
-    }
-  };
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, { phoneNumber: formattedNumber }); // Save properly formatted number
 
-  const verifyOtp = async () => {
-    if (!otp) {
-      toast.error("Enter OTP first");
-      return;
+      toast.success("Phone number saved successfully!");
+      navigate("/profile");
+    } catch (error) {
+      console.error("Error saving phone number:", error);
+      toast.error("Failed to save phone number. Please try again.");
     }
-    try {
-      await user.confirm(otp);
-      toast.success("Phone number verified successfully!");
-      navigate("/profile"); // navigate after verification
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to verify OTP: " + err.message);
-    }
-  };
-
-  const handlePhoneVerification = () => {
-    navigate("/profile");
   };
 
   return (
     <div className="popup-overlay">
       <div className="popup-box">
         <div className="cancle">
-          <div className="cancle-btn" onClick={handlePhoneVerification}>
+          <div className="cancle-btn" onClick={() => navigate("/profile")}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="30"
@@ -97,27 +94,21 @@ const PhoneVerification = () => {
         <h3>Enter Phone Number</h3>
         <div className="popup-content">
           <div className="pop-input">
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+            <PhoneInput
+              country={"in"}
+              value={phoneNumber}
+              onChange={(value, country) => handleChange(value, country)}
               placeholder="Enter phone number"
+              inputProps={{ required: true }}
             />
           </div>
+          {!valid && (
+            <p className="error-message">Please enter a valid mobile number.</p>
+          )}
           <div className="pop-btn">
-            <button onClick={sendOtp}>Send OTP</button>
-          </div>
-          <div id="recaptcha-container"></div>
-          <div className="pop-input">
-            <input
-              type="text"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              placeholder="Enter OTP"
-            />
-          </div>
-          <div className="pop-btn">
-            <button onClick={verifyOtp}>Verify OTP</button>
+            <button type="submit" onClick={handleSubmit}>
+              Save
+            </button>
           </div>
         </div>
       </div>

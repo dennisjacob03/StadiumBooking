@@ -83,9 +83,9 @@ const OwnerDash = () => {
             </Link>
           </div>
           <div className="main 3">
-            <h1>Seats</h1>
-            <p>Manage Seats</p>
-            <Link to="/Ownerseats" className="btn">
+            <h1>Category</h1>
+            <p>Manage Category</p>
+            <Link to="/Ownercategory" className="btn">
               View
             </Link>
           </div>

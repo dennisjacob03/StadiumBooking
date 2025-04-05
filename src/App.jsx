@@ -11,7 +11,7 @@ import Adminnavbar from "./Components/Adminnavbar/Adminnavbar";
 import OwnerDash from "./Components/OwnerDash/OwnerDash";
 import Ownernavbar from "./Components/Ownernavbar/Ownernavbar";
 import Contact from "./Components/Contact/Contact";
-import Bookings from "./Components/Bookings/Bookings";
+import Adminbookings from "./Components/Adminbookings/Adminbookings";
 import Users from "./Components/Users/Users";
 import Events from "./Components/Events/Events";
 import Stadiums from "./Components/Stadiums/Stadiums"
@@ -29,6 +29,7 @@ import Admincategory from "./Components/Admincategory/Admincategory";
 import Stadiumrgics from "./Components/Stadiumrgics/Stadiumrgics"
 import Seatbook from "./Components/Seatbook/Seatbook";
 import PhoneVerification from "./Components/PhoneVerification/PhoneVerification";
+import Payment from "./Components/Payment/Payment";
 
 const App = () => {
   return (
@@ -45,7 +46,7 @@ const App = () => {
           <Route path="/adminnavbar" element={<Adminnavbar />} />
           <Route path="/ownernavbar" element={<Ownernavbar />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/bookings" element={<Bookings />} />
+          <Route path="/adminbookings" element={<Adminbookings />} />
           <Route path="/users" element={<Users />} />
           <Route path="/events" element={<Events />} />
           <Route path="/stadiums" element={<Stadiums />} />
@@ -63,6 +64,7 @@ const App = () => {
           <Route path="/stadiumrgics" element={<Stadiumrgics />} />
           <Route path="/seatbook/:eventId/:categoryId" element={<Seatbook />} />
           <Route path="/phoneverification" element={<PhoneVerification />} />
+          <Route path="/payment/:bookingId" element={<Payment />} />
         </Routes>
       </AuthProvider>
     </Router>

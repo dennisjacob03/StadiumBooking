@@ -71,22 +71,22 @@ const Adminnavbar = () => {
           <img src={logo} alt="SpotOn" className="logo" />
           <ul>
             <li>
-              <div className="main-search">
+              {/* <div className="main-search">
                 <input type="search" placeholder="Search" />
                 <button className="btn">Search</button>
-              </div>
+              </div> */}
             </li>
             <li>
               {currentUser ? (
                 <div className="user-info">
                   <span className="user">
-																			{userData?.profile_pic ? (
-																				<img src={userData?.profile_pic} alt="user" />
-																			) : (
-																				<img src={user} alt="user" />
-																			)}
-																			Hi, {userData?.username || "Guest"}
-																		</span>
+                    {userData?.profile_pic ? (
+                      <img src={userData?.profile_pic} alt="user" />
+                    ) : (
+                      <img src={user} alt="user" />
+                    )}
+                    Hi, {userData?.username || "Guest"}
+                  </span>
                   <div className="on-hover">
                     <Link to="/adminprofile" className="profile-link">
                       My Profile

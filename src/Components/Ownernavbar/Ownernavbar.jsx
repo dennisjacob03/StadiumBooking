@@ -71,10 +71,10 @@ const Ownernavbar = () => {
           <img src={logo} alt="SpotOn" className="logo" />
           <ul>
             <li>
-              <div className="main-search">
+              {/* <div className="main-search">
                 <input type="search" placeholder="Search" />
                 <button className="btn">Search</button>
-              </div>
+              </div> */}
             </li>
             <li>
               {currentUser ? (

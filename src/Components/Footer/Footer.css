@@ -30,16 +30,21 @@
 .foot .logo img {
   height: 30px;
 }
+.logo{
+	margin-bottom: 10px;
+}
 .follow ul{
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	width: 190px;
 }
+.main-foot{
+	padding-right: 280px;
+	min-width: 250px;
+}
 .main-foot p{
-	padding-top: 20px;
 	font-size: 14px;
-	padding-right: 250px;
 }
 .follow{
 	padding-top: 10px;

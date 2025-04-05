@@ -51,9 +51,29 @@ a {
 }
 .manage-links button{
 	margin: 10px;
+	background-color: #161616;
 }
 .manage-links{
 	padding-left: 20px;
+	.save,.edit{
+  color: rgb(255, 255, 255);
+  padding: 8px 20px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 0;
+  outline: 0;
+  font-weight: bold;
+	width: auto;
+	}
+	.save{
+	background-color: rgb(48, 90, 48);
+	}
+	.save:disabled{
+		background-color: #a4a4a4;
+			cursor: not-allowed;
+			color: #434343;
+	}
 }
 .profile-img{ 
 	img{
@@ -195,6 +215,11 @@ hr{
 		outline: 0;
 		font-weight: bold;
 		margin-top: 40px;
+	}
+	button:disabled{
+		background-color: #a4a4a4;
+			cursor: not-allowed;
+			color: #434343;
 	}
 }
 .otheredits{
