@@ -1,115 +1,113 @@
-.navbar{
+.navbar {
+  .user-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 4px;
+    border-radius: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
 
-.user-info {
-  display: flex;
-	flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-	padding: 4px;
-	border-radius: 5px;
-	margin-right: 10px;
-	cursor: pointer;
-}
+  .user {
+    font-weight: bold;
+    color: #ffffff;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .on-hover {
+    width: 160px;
+    display: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    margin-top: 120px;
+    height: 80px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    hr {
+      width: 100%;
+    }
+    button {
+      background-color: #169154;
+      color: #ffffff;
+      border: none;
+      width: 140px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #177748;
+      transition: 0.5s;
+    }
+  }
+  .user-info:hover {
+    .on-hover {
+      display: flex;
+      transition: 0.5s;
+    }
+  }
+  .profile-link {
+    color: #000000;
+    margin: 4px;
+    border: 1px solid rgba(98, 127, 97, 0.682);
+    border-radius: 4px;
+    width: 90%;
+    text-align: center;
+    padding: 4px 0;
+  }
+  .profile-link:hover {
+    background-color: #eae8e8;
+  }
+  .user img {
+    border: 2px solid #006923;
+    height: 34px;
+    margin-right: 10px;
+    border-radius: 50%;
+  }
+  .logout-btn {
+    color: white;
+    border: none;
+    width: 90%;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 4px 0;
+  }
 
-.user {
-  font-weight: bold;
-  color: #ffffff;
-  font-size: 16px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-.on-hover{
-	width: 160px;
-	display: none;
-	flex-wrap: wrap;
-	justify-content: center;
-	align-items: center;
-	position: fixed;
-	margin-top: 120px;
-	height: 80px;
-	background-color: #ffffff;
-	border-radius: 6px;
-	hr{
-		width: 100%;
-	}
-	button{
-		background-color: #169154;
-		color: #ffffff;
-		border: none;
-		width: 140px;
-		cursor: pointer;
-		border-radius: 5px;
-	}
-	button:hover{
-		background-color: #177748;
-		transition: 0.5s;
-	}
-}
-.user-info:hover{
-	.on-hover{
-	display: flex;
-	transition: 0.5s;
-	}
-}
-.profile-link{
-	color: #000000;
-	margin: 4px;
-	border: 1px solid rgba(98, 127, 97, 0.682);
-	border-radius: 4px;
-	width: 90%;
-	text-align: center;
-	padding: 4px 0;
-}
-.profile-link:hover{
-	background-color: #eae8e8;
-}
-.user img{
-	border: 2px solid #006923;
-	height: 34px;
-	margin-right: 10px;
-	border-radius: 50%;
-}
-.logout-btn {
-  color: white;
-  border: none;
-	width: 90%;
-  cursor: pointer;
-  border-radius: 5px;
-	margin: 4px 0;
-}
-
-
-	nav{
-	width: 100%;
-	/* background: #169154; */
-	color: #ffffff;
-	padding: 4px 0;
-	position: fixed;
-	top: 0;
-	left: 0;
-	display: flex;
-  align-items: center;
-  justify-content: space-between;
-	z-index: 10;
-}
-.logo{
-	width: 130px;
-}
-nav ul{
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-nav ul li{
-	display: inline-block;
-	list-style: none;
-	margin: 10px 24px;
-	font-size: 16px;
-	font-weight: bold;
-}
-.dark-nav{
-	background: #22925a;
-	transition: 0.5s;
-}
+  nav {
+    width: 100%;
+    /* background: #169154; */
+    color: #ffffff;
+    padding: 4px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10;
+  }
+  .logo {
+    width: 130px;
+  }
+  nav ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  nav ul li {
+    display: inline-block;
+    list-style: none;
+    margin: 10px 24px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .dark-nav {
+    background: #22925a;
+    transition: 0.5s;
+  }
 }

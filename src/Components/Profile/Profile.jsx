@@ -128,13 +128,14 @@ const Profile = () => {
     try {
       const userRef = doc(db, "users", currentUser.uid);
       await updateDoc(userRef, {
-        username: userData.username ||"",
+        username: userData.username || "",
         DOB: userData.DOB || "",
-				city: userData.city || "",
+        city: userData.city || "",
         state: userData.state || "",
-        address: userData.address||	"",
+        address: userData.address || "",
         pincode: userData.pincode || "",
         profile_pic: profilePicData || "",
+        updatedAt: serverTimestamp(),
       });
       toast.success("Profile updated successfully!");
       setUserData({ ...userData, profile_pic: profilePicData });
@@ -305,8 +306,7 @@ const Profile = () => {
               </span>
               <div className="data">
                 <label>
-                  Full Name:
-                  <span className="mandatory">*</span>
+                  Full Name: *
                 </label>
                 <input
                   type="text"
@@ -330,8 +330,7 @@ const Profile = () => {
               </div>
               <div className="data">
                 <label>
-                  Pincode:
-                  <span className="mandatory">*</span>
+                  Pincode: *
                 </label>
                 <input
                   type="text"
@@ -342,8 +341,7 @@ const Profile = () => {
               </div>
               <div className="data">
                 <label>
-                  Address:
-                  <span className="mandatory">*</span>
+                  Address: *
                 </label>
                 <input
                   type="text"
@@ -356,8 +354,7 @@ const Profile = () => {
               </div>
               <div className="data">
                 <label>
-                  City:
-                  <span className="mandatory">*</span>
+                  City: *
                 </label>
                 <input
                   type="text"
@@ -371,8 +368,7 @@ const Profile = () => {
               </div>
               <div className="data">
                 <label>
-                  State:
-                  <span className="mandatory">*</span>
+                  State: *
                 </label>
                 <input
                   type="text"

@@ -81,7 +81,11 @@ const Navbar = () => {
             {currentUser ? (
               <div className="user-info">
                 <span className="user">
-                  {userData?.profile_pic? (<img src={userData?.profile_pic} alt="user" />):(<img src={user} alt="user" />)}
+                  {userData?.profile_pic ? (
+                    <img src={userData?.profile_pic} alt="user" />
+                  ) : (
+                    <img src={user} alt="user" />
+                  )}
                   Hi, {userData?.username || "Guest"}
                 </span>
                 <div className="on-hover">

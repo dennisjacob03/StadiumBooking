@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase";
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  getDoc,
+} from "firebase/firestore";
 import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext";
 import Adminnavbar from "../Adminnavbar/Adminnavbar";
 import "./users.css";
 import userIcon from "../../assets/user-default.png";
+import { recordLoginActivity } from "../../utils/loginUtils";
 
 const Users = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth();
   const [users, setUsers] = useState([]);
+  const [userData, setUserData] = useState(null);
 
   // Fetch users from Firestore
   useEffect(() => {
@@ -29,6 +37,31 @@ const Users = () => {
 
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (currentUser) {
+        try {
+          // Fetch user data
+          const userRef = doc(db, "users", currentUser.uid);
+          const userSnap = await getDoc(userRef);
+
+          if (userSnap.exists()) {
+            setUserData(userSnap.data());
+          }
+
+          // Record login activity with admin type
+          localStorage.setItem("userType", "admin");
+          await recordLoginActivity(currentUser.uid, "login");
+        } catch (error) {
+          console.error("Error fetching admin data:", error);
+          toast.error("Error loading admin data");
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [currentUser]);
 
   // Update user role
   const handleRoleChange = async (userId, newRole) => {
@@ -59,6 +92,25 @@ const Users = () => {
     } catch (error) {
       console.error("Error updating status:", error);
       toast.error("Failed to update status.");
+    }
+  };
+
+  const handleLogout = async () => {
+    if (currentUser) {
+      try {
+        // Record logout activity
+        await recordLoginActivity(currentUser.uid, "logout");
+
+        // Clear userType from localStorage
+        localStorage.removeItem("userType");
+
+        // Perform logout
+        await logout();
+        toast.success("Logged out successfully!");
+      } catch (error) {
+        console.error("Error during admin logout:", error);
+        toast.error("Error logging out");
+      }
     }
   };
 
