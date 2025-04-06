@@ -17,7 +17,7 @@ import "./Ownerevents.css";
 const Ownerevents = () => {
   const { currentUser } = useAuth();
   const [events, setEvents] = useState([]);
-		const [stadiums, setStadiums] = useState([]);
+  const [stadiums, setStadiums] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(null);
   const [editedEvent, setEditedEvent] = useState(null);
@@ -26,33 +26,33 @@ const Ownerevents = () => {
     sport: "",
     team1: "",
     team2: "",
-		stadium_id: "",
+    stadium_id: "",
     date_time: "",
     description: "",
     event_poster: "",
     approval: "Pending",
-		status: 1,
+    status: 1,
   });
 
   useEffect(() => {
-			const fetchStadiums = async () => {
-				try {
-					const stadiumsRef = collection(db, "stadiums");
-					const q = query(
-            stadiumsRef,
-            where("status", "==", 1),
-            where("approval", "==", "Approved")
-          );
-					const snapshot = await getDocs(q);
-					const stadiumList = snapshot.docs.map((doc) => ({
-						id: doc.id,
-						...doc.data(),
-					}));
-					setStadiums(stadiumList);
-				} catch (error) {
-					toast.error("Error fetching stadiums:", error);
-				}
-			};
+    const fetchStadiums = async () => {
+      try {
+        const stadiumsRef = collection(db, "stadiums");
+        const q = query(
+          stadiumsRef,
+          where("status", "==", 1),
+          where("approval", "==", "Approved")
+        );
+        const snapshot = await getDocs(q);
+        const stadiumList = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setStadiums(stadiumList);
+      } catch (error) {
+        toast.error("Error fetching stadiums:", error);
+      }
+    };
     const fetchEvents = async () => {
       if (!currentUser) {
         setLoading(false);
@@ -60,12 +60,19 @@ const Ownerevents = () => {
       }
       try {
         const eventsRef = collection(db, "events");
-        const q = query(eventsRef, where("ownerId", "==", currentUser.uid),where("status", "==", 1) );
+        const q = query(
+          eventsRef,
+          where("ownerId", "==", currentUser.uid),
+          where("status", "==", 1)
+        );
         const snapshot = await getDocs(q);
-        const eventList = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const eventList = snapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .sort((a, b) => new Date(a.date_time) - new Date(b.date_time)); // Sort by date_time
+
         setEvents(eventList);
       } catch (error) {
         toast.error("Error fetching events:", error);
@@ -94,7 +101,7 @@ const Ownerevents = () => {
       !newEvent.sport ||
       !newEvent.team1 ||
       !newEvent.team2 ||
-			!newEvent.stadium_id ||
+      !newEvent.stadium_id ||
       !newEvent.date_time ||
       !newEvent.description ||
       !newEvent.event_poster
@@ -103,18 +110,18 @@ const Ownerevents = () => {
       return;
     }
     try {
-			const eventsRef = collection(db, "events");
-								const q = query(
-                  eventsRef,
-                  where("status", "==", 1),
-                  where("date_time", "==", newEvent.date_time)
-                );
-								const snapshot = await getDocs(q);
-					
-								if (!snapshot.empty) {
-									toast.error("There is another event scheduled at this time!");
-									return;
-								}
+      const eventsRef = collection(db, "events");
+      const q = query(
+        eventsRef,
+        where("status", "==", 1),
+        where("date_time", "==", newEvent.date_time)
+      );
+      const snapshot = await getDocs(q);
+
+      if (!snapshot.empty) {
+        toast.error("There is another event scheduled at this time!");
+        return;
+      }
       const docRef = await addDoc(collection(db, "events"), {
         ...newEvent,
         ownerId: currentUser.uid,
@@ -131,7 +138,7 @@ const Ownerevents = () => {
         description: "",
         event_poster: "",
         approval: "Pending",
-				status: 1,
+        status: 1,
       });
       toast.success("Event added successfully! Awaiting admin approval.");
     } catch (error) {
@@ -140,18 +147,17 @@ const Ownerevents = () => {
     }
   };
 
-		const handleDelete = async (id) => {
-			if (!window.confirm("Are you sure you want to delete this event?"))
-        return;
-			try {
-        await updateDoc(doc(db, "events", id), { status: 0 }); // Soft delete
-        setEvents(events.filter((event) => event.id !== id));
-        toast.success("Event deleted successfully!");
-      } catch (error) {
-				console.error("Error deleting event:", error);
-				toast.error("Failed to delete event.");
-			}
-		};
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this event?")) return;
+    try {
+      await updateDoc(doc(db, "events", id), { status: 0 }); // Soft delete
+      setEvents(events.filter((event) => event.id !== id));
+      toast.success("Event deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      toast.error("Failed to delete event.");
+    }
+  };
 
   return (
     <div className="ownerevents">
@@ -198,7 +204,9 @@ const Ownerevents = () => {
               setNewEvent({ ...newEvent, stadium_id: e.target.value })
             }
           >
-            <option value="" disabled>Select Stadium</option>
+            <option value="" disabled>
+              Select Stadium
+            </option>
             {stadiums.map((stadiums) => (
               <option key={stadiums.id} value={stadiums.id}>
                 {stadiums.stadium_name}
@@ -230,148 +238,149 @@ const Ownerevents = () => {
         ) : (
           <div className="events">
             <h2>Events List</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>SI No.</th>
-                <th>Event Poster</th>
-                <th>Event Name</th>
-                <th>Sport</th>
-                <th>Teams</th>
-                <th>Stadium</th>
-                <th>Date & Time</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {events.map((event, index) => (
-                <tr key={event.id}>
-                  <td>{index + 1}</td>
-                  <td>
-                    <img
-                      src={event.event_poster}
-                      alt={event.event_name}
-                      className="event-poster"
-                    />
-                  </td>
-                  <td>
-                    {editMode === event.id ? (
-                      <input
-                        type="text"
-                        value={editedEvent.event_name}
-                        onChange={(e) =>
-                          setEditedEvent({
-                            ...editedEvent,
-                            event_name: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      event.event_name
-                    )}
-                  </td>
-                  <td>
-                    {editMode === event.id ? (
-                      <input
-                        type="text"
-                        value={editedEvent.sport}
-                        onChange={(e) =>
-                          setEditedEvent({
-                            ...editedEvent,
-                            sport: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      event.sport
-                    )}
-                  </td>
-                  <td>
-                    {editMode === event.id ? (
-                      <>
-                        <input
-                          type="text"
-                          value={editedEvent.team1}
-                          onChange={(e) =>
-                            setEditedEvent({
-                              ...editedEvent,
-                              team1: e.target.value,
-                            })
-                          }
-                        />
-                        {" vs "}
-                        <input
-                          type="text"
-                          value={editedEvent.team2}
-                          onChange={(e) =>
-                            setEditedEvent({
-                              ...editedEvent,
-                              team2: e.target.value,
-                            })
-                          }
-                        />
-                      </>
-                    ) : (
-                      `${event.team1} vs ${event.team2}`
-                    )}
-                  </td>
-                  <td>
-                    {stadiums.find((stadium) => stadium.id === event.stadium_id)
-                      ?.stadium_name || "Unknown Stadium"}
-                  </td>
-
-                  <td>
-                    {editMode === event.id ? (
-                      <input
-                        type="datetime-local"
-                        value={editedEvent.date_time}
-                        onChange={(e) =>
-                          setEditedEvent({
-                            ...editedEvent,
-                            date_time: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      new Date(event.date_time).toLocaleString()
-                    )}
-                  </td>
-                  <td className="description-cell">
-                    {editMode === event.id ? (
-                      <textarea
-                        value={editedEvent.description}
-                        onChange={(e) =>
-                          setEditedEvent({
-                            ...editedEvent,
-                            description: e.target.value,
-                          })
-                        }
-                        style={{ maxHeight: "100px", overflowY: "auto" }} // Scrollable description
-                      />
-                    ) : (
-                      <div style={{ maxHeight: "100px", overflowY: "auto" }}>
-                        {event.description}
-                      </div>
-                    )}
-                  </td>
-                  <td className="status">
-                    <span>{event.approval}</span>
-                  </td>
-                  <td className="actions">
-                    <button
-                      onClick={() => handleDelete(event.id)}
-                      className="delete"
-                    >
-                      <i class="material-icons delete">delete</i>
-                    </button>
-                  </td>
+            <table>
+              <thead>
+                <tr>
+                  <th>SI No.</th>
+                  <th>Event Poster</th>
+                  <th>Event Name</th>
+                  <th>Sport</th>
+                  <th>Teams</th>
+                  <th>Stadium</th>
+                  <th>Date & Time</th>
+                  <th>Description</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-				</div>
+              </thead>
+              <tbody>
+                {events.map((event, index) => (
+                  <tr key={event.id}>
+                    <td>{index + 1}</td>
+                    <td>
+                      <img
+                        src={event.event_poster}
+                        alt={event.event_name}
+                        className="event-poster"
+                      />
+                    </td>
+                    <td>
+                      {editMode === event.id ? (
+                        <input
+                          type="text"
+                          value={editedEvent.event_name}
+                          onChange={(e) =>
+                            setEditedEvent({
+                              ...editedEvent,
+                              event_name: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        event.event_name
+                      )}
+                    </td>
+                    <td>
+                      {editMode === event.id ? (
+                        <input
+                          type="text"
+                          value={editedEvent.sport}
+                          onChange={(e) =>
+                            setEditedEvent({
+                              ...editedEvent,
+                              sport: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        event.sport
+                      )}
+                    </td>
+                    <td>
+                      {editMode === event.id ? (
+                        <>
+                          <input
+                            type="text"
+                            value={editedEvent.team1}
+                            onChange={(e) =>
+                              setEditedEvent({
+                                ...editedEvent,
+                                team1: e.target.value,
+                              })
+                            }
+                          />
+                          {" vs "}
+                          <input
+                            type="text"
+                            value={editedEvent.team2}
+                            onChange={(e) =>
+                              setEditedEvent({
+                                ...editedEvent,
+                                team2: e.target.value,
+                              })
+                            }
+                          />
+                        </>
+                      ) : (
+                        `${event.team1} vs ${event.team2}`
+                      )}
+                    </td>
+                    <td>
+                      {stadiums.find(
+                        (stadium) => stadium.id === event.stadium_id
+                      )?.stadium_name || "Unknown Stadium"}
+                    </td>
+
+                    <td>
+                      {editMode === event.id ? (
+                        <input
+                          type="datetime-local"
+                          value={editedEvent.date_time}
+                          onChange={(e) =>
+                            setEditedEvent({
+                              ...editedEvent,
+                              date_time: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        new Date(event.date_time).toLocaleString()
+                      )}
+                    </td>
+                    <td className="description-cell">
+                      {editMode === event.id ? (
+                        <textarea
+                          value={editedEvent.description}
+                          onChange={(e) =>
+                            setEditedEvent({
+                              ...editedEvent,
+                              description: e.target.value,
+                            })
+                          }
+                          style={{ maxHeight: "100px", overflowY: "auto" }} // Scrollable description
+                        />
+                      ) : (
+                        <div style={{ maxHeight: "100px", overflowY: "auto" }}>
+                          {event.description}
+                        </div>
+                      )}
+                    </td>
+                    <td className="status">
+                      <span>{event.approval}</span>
+                    </td>
+                    <td className="actions">
+                      <button
+                        onClick={() => handleDelete(event.id)}
+                        className="delete"
+                      >
+                        <i class="material-icons delete">delete</i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

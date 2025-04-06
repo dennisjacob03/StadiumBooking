@@ -193,7 +193,7 @@ const Signup = () => {
                   autoComplete="new-password"
                 />
               </div>
-              <div className="check">
+              {/* <div className="check">
                 <input
                   type="checkbox"
                   name="agreeToTerms"
@@ -206,7 +206,7 @@ const Signup = () => {
                   <Link to="/terms"> Terms of Service </Link> and
                   <Link to="/privacy"> Privacy Policy</Link>
                 </label>
-              </div>
+              </div> */}
             </div>
             <div className="signing">
               <button type="submit" className="signbtn" disabled={loading}>

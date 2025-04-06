@@ -21,12 +21,20 @@ const Events = () => {
     const fetchEventsAndStadiums = async () => {
       try {
         // Fetch events
-        const eventsRef = query(collection(db, "events"), where("status", "==", 1));
+        const eventsRef = query(
+          collection(db, "events"),
+          where("status", "==", 1)
+        );
         const eventsSnapshot = await getDocs(eventsRef);
         const eventList = eventsSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
+
+        // Sort events by date_time
+        const sortedEvents = eventList.sort(
+          (a, b) => new Date(a.date_time) - new Date(b.date_time)
+        );
 
         // Fetch stadiums
         const stadiumsRef = collection(db, "stadiums");
@@ -36,7 +44,7 @@ const Events = () => {
           stadiumData[doc.id] = doc.data().stadium_name;
         });
 
-        setEvents(eventList);
+        setEvents(sortedEvents);
         setStadiums(stadiumData);
       } catch (error) {
         console.error("Error fetching events or stadiums:", error);
@@ -58,7 +66,6 @@ const Events = () => {
         )
       );
       toast.success(`Event marked as ${approval}`);
-
     } catch (error) {
       console.error("Error updating event status:", error);
       toast.error("Failed to update event status.");

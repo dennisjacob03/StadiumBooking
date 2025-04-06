@@ -30,7 +30,7 @@ import Stadiumrgics from "./Components/Stadiumrgics/Stadiumrgics"
 import Seatbook from "./Components/Seatbook/Seatbook";
 import PhoneVerification from "./Components/PhoneVerification/PhoneVerification";
 import Payment from "./Components/Payment/Payment";
-
+import Tickets from "./Components/Tickets/Tickets"
 const App = () => {
   return (
     <Router>
@@ -65,6 +65,7 @@ const App = () => {
           <Route path="/seatbook/:eventId/:categoryId" element={<Seatbook />} />
           <Route path="/phoneverification" element={<PhoneVerification />} />
           <Route path="/payment/:bookingId" element={<Payment />} />
+          <Route path="/tickets/:bookingId" element={<Tickets />} />
         </Routes>
       </AuthProvider>
     </Router>

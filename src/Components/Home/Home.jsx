@@ -9,12 +9,12 @@ import "./Home.css";
 
 const Home = () => {
   const [events, setEvents] = useState([]);
-	const [filteredEvents, setFilteredEvents] = useState([]);
-	const [stadiums, setStadiums] = useState({});
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [stadiums, setStadiums] = useState({});
   const [loading, setLoading] = useState(true);
-	const [searchQuery, setSearchQuery] = useState("");
-	const [selectedCity, setSelectedCity] = useState("all");
-	const [selectedDate, setSelectedDate] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCity, setSelectedCity] = useState("all");
+  const [selectedDate, setSelectedDate] = useState("");
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -25,10 +25,23 @@ const Home = () => {
           where("approval", "==", "Approved")
         );
         const snapshot = await getDocs(q);
-        const eventList = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const currentTime = new Date();
+        const tenHoursFromNow = new Date(
+          currentTime.getTime() + 10 * 60 * 60 * 1000
+        );
+
+        const eventList = snapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .filter((event) => {
+            const eventTime = new Date(event.date_time);
+            // Filter out expired events and events less than 10 hours away
+            return eventTime > tenHoursFromNow;
+          })
+          .sort((a, b) => new Date(a.date_time) - new Date(b.date_time)); // Sort by date_time
+
         const stadiumsRef = collection(db, "stadiums");
         const stadiumsSnapshot = await getDocs(stadiumsRef);
         const stadiumData = {};
@@ -41,7 +54,7 @@ const Home = () => {
 
         setStadiums(stadiumData);
         setEvents(eventList);
-        setFilteredEvents(eventList); // Initially, show all events
+        setFilteredEvents(eventList); // Initially, show all filtered and sorted events
       } catch (error) {
         toast.error("Error fetching events:", error);
       }
@@ -50,7 +63,7 @@ const Home = () => {
     fetchEvents();
   }, []);
 
-	const handleSearch = (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
     let filtered = events;
 
@@ -58,14 +71,14 @@ const Home = () => {
     if (searchQuery.trim() !== "") {
       filtered = filtered.filter((event) => {
         const stadiumName = stadiums[event.stadium_id]?.name || "";
-				const stadiumCity = stadiums[event.stadium_id]?.city || "";
+        const stadiumCity = stadiums[event.stadium_id]?.city || "";
         return (
           event.sport.toLowerCase().includes(searchQuery.toLowerCase()) ||
           event.event_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           event.team1.toLowerCase().includes(searchQuery.toLowerCase()) ||
           event.team2.toLowerCase().includes(searchQuery.toLowerCase()) ||
           stadiumName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-					stadiumCity.toLowerCase().includes(searchQuery.toLowerCase())
+          stadiumCity.toLowerCase().includes(searchQuery.toLowerCase())
         );
       });
     }

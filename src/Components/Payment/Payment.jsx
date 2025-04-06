@@ -15,6 +15,7 @@ import Footer from "../Footer/Footer";
 import "./Payment.css";
 import { useAuth } from "../../contexts/AuthContext";
 import logo from "../../assets/logowhite.png";
+import emailjs from "@emailjs/browser";
 
 const Payment = () => {
   const { bookingId } = useParams();
@@ -29,8 +30,8 @@ const Payment = () => {
   const [userData, setUserData] = useState(null);
   const [ticketPrice, setTicketPrice] = useState(0);
   const [loading, setLoading] = useState(true);
-const [expiryTime, setExpiryTime] = useState(null);
-const [timeLeft, setTimeLeft] = useState("");
+  const [expiryTime, setExpiryTime] = useState(null);
+  const [timeLeft, setTimeLeft] = useState("");
 
   useEffect(() => {
     // Main fetch function to coordinate all data retrieval
@@ -60,37 +61,33 @@ const [timeLeft, setTimeLeft] = useState("");
         const expiry = new Date(bookingTime.getTime() + 10 * 60000);
         setExpiryTime(expiry);
 
-                let interval;
-                let hasExpired = false;
+        let interval;
+        let hasExpired = false;
 
-                const startTimer = () => {
-                  interval = setInterval(() => {
-                    const now = new Date();
-                    const diff = expiry - now;
+        const startTimer = () => {
+          interval = setInterval(() => {
+            const now = new Date();
+            const diff = expiry - now;
 
-                    if (diff <= 0 && !hasExpired) {
-                      hasExpired = true; // prevent duplicate toast + navigation
-                      clearInterval(interval);
-                      setTimeLeft("00:00");
-                      toast.error("Booking expired due to timeout!");
-                      navigate("/");
-                    } else if (diff > 0) {
-                      const minutes = String(Math.floor(diff / 60000)).padStart(
-                        2,
-                        "0"
-                      );
-                      const seconds = String(
-                        Math.floor((diff % 60000) / 1000)
-                      ).padStart(2, "0");
-                      setTimeLeft(`${minutes}:${seconds}`);
-                    }
-                  }, 1000);
-                };
+            if (diff <= 0 && !hasExpired) {
+              hasExpired = true; // prevent duplicate toast + navigation
+              clearInterval(interval);
+              setTimeLeft("00:00");
+              toast.error("Booking expired due to timeout!");
+              navigate("/");
+            } else if (diff > 0) {
+              const minutes = String(Math.floor(diff / 60000)).padStart(2, "0");
+              const seconds = String(
+                Math.floor((diff % 60000) / 1000)
+              ).padStart(2, "0");
+              setTimeLeft(`${minutes}:${seconds}`);
+            }
+          }, 1000);
+        };
 
-                startTimer();
+        startTimer();
 
-                return () => clearInterval(interval);
-
+        return () => clearInterval(interval);
       } catch (error) {
         toast.error("Error fetching booking details");
         console.error(error);
@@ -193,14 +190,55 @@ const [timeLeft, setTimeLeft] = useState("");
       document.body.appendChild(script);
     });
   };
-	
 
   const numSeats = bookingDetails?.seats?.length || 0;
   const subtotal = bookingDetails?.subtotal || ticketPrice * numSeats;
   const bookingFee = bookingDetails?.bookingFee || subtotal * 0.03;
   const total = bookingDetails?.totalPrice || subtotal + bookingFee;
-	
-	const handlePayment = async () => {
+
+  const sendTicketEmail = async () => {
+    try {
+      // Format seats data
+      const seatsData = bookingDetails.seats.map((seat) => ({
+        category_name: category?.category_name,
+        section: seat.split("-")[0],
+        row: seat.split("-")[1],
+        seat_number: seat.split("-")[2],
+      }));
+
+      const templateParams = {
+        to_name: userData?.username,
+        email: userData?.email,
+        booking_id: bookingId,
+        event_name: event?.event_name,
+        team1: event?.team1,
+        team2: event?.team2,
+        event_date: formattedEventDate,
+        event_time: formattedEventTime,
+        stadium_name: stadium?.stadium_name,
+        stadium_location: stadium?.location,
+        logo_url: { logo },
+        seats: seatsData,
+        subtotal: subtotal.toFixed(2),
+        booking_fee: bookingFee.toFixed(2),
+        total_amount: total.toFixed(2),
+      };
+
+      await emailjs.send(
+        "service_vj91knm",
+        "template_tj3tviy",
+        templateParams,
+        "UVAEUcZlQOTjm3Qdc"
+      );
+
+      console.log("Email sent successfully");
+    } catch (error) {
+      console.error("Error sending email:", error);
+      toast.error("Failed to send ticket confirmation email");
+    }
+  };
+
+  const handlePayment = async () => {
     const res = await loadRazorpayScript();
 
     if (!res) {
@@ -214,8 +252,9 @@ const [timeLeft, setTimeLeft] = useState("");
       name: "SpotOn",
       description: "Stadium Online Ticket Booking",
       image: logo,
-      handler: async (response) =>{
+      handler: async (response) => {
         try {
+          // Add payment to database
           await addDoc(collection(db, "payments"), {
             bookingId: bookingId,
             paymentId: response.razorpay_payment_id,
@@ -226,25 +265,32 @@ const [timeLeft, setTimeLeft] = useState("");
             phone: userData?.phoneNumber,
             pincode: userData?.pincode,
           });
+
+          // Update booking status
           await updateDoc(doc(db, "bookings", bookingId), {
             payment: "Completed",
           });
 
-          // Create a ticket document for each paid seat
+          // Create tickets
           const seatList = bookingDetails?.seats || [];
-          for (let seat of seatList) {
-            await addDoc(collection(db, "tickets"), {
+          const ticketPromises = seatList.map((seat) =>
+            addDoc(collection(db, "tickets"), {
               seat: seat,
-              paymentId: response.razorpay_payment_id,
-            });
-          }
-          toast.success("Payment successful!");
-          navigate(
-            `/seatbook/${bookingDetails.eventId}/${bookingDetails.categoryId}`
+              bookingId: bookingId,
+            })
           );
+          await Promise.all(ticketPromises);
+
+          // Send confirmation email
+          await sendTicketEmail();
+
+          toast.success(
+            "Payment successful! Ticket details sent to your email."
+          );
+          navigate(`/tickets/${bookingId}`);
         } catch (error) {
-          toast.error("Failed to store payment details");
-          console.error("Error storing payment details:", error);
+          toast.error("Failed to complete payment process");
+          console.error("Error:", error);
         }
       },
       prefill: {
@@ -260,7 +306,6 @@ const [timeLeft, setTimeLeft] = useState("");
     const razorpay = new window.Razorpay(options);
     razorpay.open();
   };
-
 
   const formattedEventDate = event?.date_time
     ? new Date(event.date_time).toLocaleDateString()
@@ -279,16 +324,14 @@ const [timeLeft, setTimeLeft] = useState("");
   return (
     <div className="payment">
       <Navbar />
-			{expiryTime && (
-          <p className="expiry-time">
-            Booking expires at:{" "}
-            <strong>{expiryTime.toLocaleTimeString()}</strong> <br />
-            Time left: <strong>{timeLeft}</strong>
-          </p>
-        )}
+      {expiryTime && (
+        <p className="expiry-time">
+          Booking expires at: <strong>{expiryTime.toLocaleTimeString()}</strong>{" "}
+          <br />
+          Time left: <strong>{timeLeft}</strong>
+        </p>
+      )}
       <div className="payment-container">
-        
-
         <div className="payment-summary">
           <h1>Complete Your Payment</h1>
 
@@ -329,7 +372,7 @@ const [timeLeft, setTimeLeft] = useState("");
               )}
               {category && (
                 <p>
-                  <strong>Seating Category:</strong>{" "}
+                  <strong>Seating Stand:</strong>{" "}
                   {category.category_name || "Not available"}
                 </p>
               )}
