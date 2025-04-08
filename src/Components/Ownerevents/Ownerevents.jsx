@@ -12,7 +12,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import Ownernavbar from "../Ownernavbar/Ownernavbar";
-import "./Ownerevents.css";
+import "./Ownerevents.scss";
 
 const Ownerevents = () => {
   const { currentUser } = useAuth();

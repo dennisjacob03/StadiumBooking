@@ -12,7 +12,7 @@ import {
 import { db } from "../../firebase";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
-import "./Tickets.css";
+import "./Tickets.scss";
 import { useAuth } from "../../contexts/AuthContext";
 import { QRCodeSVG } from "qrcode.react";
 import html2canvas from "html2canvas";

@@ -12,7 +12,7 @@ import {
   where,
 } from "firebase/firestore";
 import Ownernavbar from "../Ownernavbar/Ownernavbar";
-import "./Ownerstadiums.css";
+import "./Ownerstadiums.scss";
 
 const Ownerstadiums = () => {
   const { currentUser } = useAuth();

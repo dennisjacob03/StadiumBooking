@@ -5,7 +5,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import { Link } from "react-router-dom";
-import "./Home.css";
+import "./Home.scss";
 
 const Home = () => {
   const [events, setEvents] = useState([]);

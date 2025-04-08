@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 import Adminnavbar from "../Adminnavbar/Adminnavbar";
 import { toast } from "react-toastify";
-import "./Events.css";
+import "./Events.scss";
 
 const Events = () => {
   const [events, setEvents] = useState([]);

@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
-import "./Profile.css";
+import "./Profile.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { sendPasswordResetEmail } from "firebase/auth";
 import user from "../../assets/user-default.png";

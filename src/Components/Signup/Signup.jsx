@@ -6,7 +6,7 @@ import { db, auth, googleProvider } from "../../firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { sendEmailVerification, signInWithPopup } from "firebase/auth";
 import logo from "../../assets/logowhite.png";
-import "./Signup.css";
+import "./Signup.scss";
 import google from "../../assets/google.webp";
 
 const Signup = () => {

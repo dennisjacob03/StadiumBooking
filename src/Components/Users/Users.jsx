@@ -10,7 +10,7 @@ import {
 import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext";
 import Adminnavbar from "../Adminnavbar/Adminnavbar";
-import "./Users.css";
+import "./Users.scss";
 import userIcon from "../../assets/user-default.png";
 import { recordLoginActivity } from "../../utils/loginUtils";
 

@@ -12,7 +12,7 @@ import {
 import { db } from "../../firebase";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
-import "./Payment.css";
+import "./Payment.scss";
 import { useAuth } from "../../contexts/AuthContext";
 import logo from "../../assets/logowhite.png";
 import emailjs from "@emailjs/browser";

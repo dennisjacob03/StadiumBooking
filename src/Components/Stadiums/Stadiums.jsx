@@ -10,7 +10,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import "./Stadiums.css";
+import "./Stadiums.scss";
 import Adminnavbar from "../Adminnavbar/Adminnavbar";
 
 const Stadiums = () => {

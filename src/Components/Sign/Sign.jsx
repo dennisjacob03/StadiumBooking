@@ -7,7 +7,7 @@ import { signInWithPopup } from "firebase/auth";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import logo from "../../assets/logowhite.png";
 import google from "../../assets/google.webp";
-import "./Sign.css";
+import "./Sign.scss";
 
 const Sign = () => {
   const [email, setEmail] = useState("");

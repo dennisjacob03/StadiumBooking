@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 import { db } from "../../firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
-import "./OwnerDash.css";
+import "./OwnerDash.scss";
 import Ownernavbar from "../Ownernavbar/Ownernavbar";
 
 const OwnerDash = () => {

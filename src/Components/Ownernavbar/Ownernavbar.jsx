@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 import { db } from "../../firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
-import "./Ownernavbar.css";
+import "./Ownernavbar.scss";
 import logo from "../../assets/logowhite.png";
 import user from "../../assets/user-default.png";
 

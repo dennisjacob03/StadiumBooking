@@ -12,7 +12,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { sendPasswordResetEmail } from "firebase/auth";
 import Adminnavbar from "../Adminnavbar/Adminnavbar";
-import "./Adminprofile.css";
+import "./Adminprofile.scss";
 import user from "../../assets/user-default.png";
 
 const Adminprofile = () => {

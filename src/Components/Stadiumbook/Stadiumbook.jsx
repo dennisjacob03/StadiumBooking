@@ -5,7 +5,7 @@ import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import { db } from "../../firebase";
 import { getDoc, doc, collection, getDocs } from "firebase/firestore";
-import "./Stadiumbook.css";
+import "./Stadiumbook.scss";
 import Stadiumrgics from "../Stadiumrgics/Stadiumrgics";
 
 const Stadiumbook = () => {

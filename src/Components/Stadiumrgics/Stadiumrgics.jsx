@@ -5,7 +5,7 @@ import { db } from "../../firebase";
 import { getDoc, doc, collection, getDocs } from "firebase/firestore";
 import { Link } from "react-router-dom";
 
-import "./Stadiumrgics.css";
+import "./Stadiumrgics.scss";
 
 const Stadiumrgics = ({ eventId }) => {
   const [event, setEvent] = useState(null);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { db } from "../../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import "./Admincategory.css";
+import "./Admincategory.scss";
 import Adminnavbar from "../Adminnavbar/Adminnavbar";
 
 const Admincategory = () => {

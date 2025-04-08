@@ -13,7 +13,7 @@ import {
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import { Link } from "react-router-dom";
-import "./Eventdetails.css";
+import "./Eventdetails.scss";
 
 const Eventdetails = () => {
   const { eventId } = useParams();

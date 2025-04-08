@@ -12,7 +12,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import Ownernavbar from "../Ownernavbar/Ownernavbar";
-import "./Ownerseats.css";
+import "./Ownerseats.scss";
 
 const Ownerseats = () => {
   const { currentUser } = useAuth();

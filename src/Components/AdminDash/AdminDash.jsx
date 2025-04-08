@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { db } from "../../firebase";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import Adminnavbar from "../Adminnavbar/Adminnavbar";
-import "./AdminDash.css";
+import "./AdminDash.scss";
 import {
   FaUsers,
   FaCalendarAlt,

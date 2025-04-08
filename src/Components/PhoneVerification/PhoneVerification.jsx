@@ -6,7 +6,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
-import "./PhoneVerification.css";
+import "./PhoneVerification.scss";
 
 const PhoneVerification = () => {
   const [phoneNumber, setPhoneNumber] = useState("");

@@ -14,7 +14,7 @@ import {
 import { db } from "../../firebase";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
-import "./Seatbook.css";
+import "./Seatbook.scss";
 import { useAuth } from "../../contexts/AuthContext";
 
 const Seatbook = () => {
