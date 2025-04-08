@@ -10,11 +10,12 @@ import {
 import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/AuthContext";
 import Adminnavbar from "../Adminnavbar/Adminnavbar";
-import "./users.css";
+import "./Users.css";
 import userIcon from "../../assets/user-default.png";
 import { recordLoginActivity } from "../../utils/loginUtils";
 
-const Users = () => {
+/*************  ✨ Windsurf Command ⭐  *************/
+/*******  6056873c-898b-4e72-ac27-8946c368aaae  *******/const Users = () => {
   const { currentUser, logout } = useAuth();
   const [users, setUsers] = useState([]);
   const [userData, setUserData] = useState(null);
