@@ -2,7 +2,6 @@
   min-height: 100vh;
   background-color: #1a1a1a;
   color: #ffffff;
-}
 
 .dashboard-container {
   padding: 24px;
@@ -245,4 +244,6 @@
   .stats-number {
     font-size: 22px;
   }
+}
+
 }
